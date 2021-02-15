@@ -399,23 +399,99 @@ export default {
       this.brands =await usersservice.getbrands();
     },
     addlead: async function(){
+     
       if(this.$refs.form.validate()){
         this.btnloading=true;
+        var token = localStorage.getItem('bsdapitoken');
+        const {status,msgs} = await  usersservice.addlead(token,{
+          brand_id:this.brand.id,
+          assigned_id : this.assigned_to.id,
+          lastname:this.last,
+          firstname:this.first,
+          email:this.email,
+          title:this.title,
+          company:this.company,
+          mobile:this.mobile,
+          website:this.website,
+          lead_status:this.lead_status,
+          industry:this.Industry,
+          total_employees:this.total_employees,
+          annual_revenue:this.annual_revenue,
+          ratings:this.ratings,
+          skype_id:this.skype_id,
+          twitter:this.twitter,
+          secondary_email:this.secondary_email,
+          street:this.street,
+          city:this.city,
+          state:this.state,
+          zip_code:this.zip_code,
+          country:this.country,
+          currency:this.currency,
+          description:this.description,
+          lead_source:this.lead_source
+        }).then(function(e){
+
+          return {status:e.status,msgs:e.data};
+        }).catch(function(e){
+          return {status:2,msgs:e.response.data.errors};
+        });
+        this.btnloading=false;
+        this.errors={};
+        if(status==1){
+          /*user created*/
+          this.$router.push({name:'auth.leads.listing'});
+        }else if(status==0){
+          /*personal error*/
+          this.errors['common']=[msgs];
+          this.snackbar=true;
+        }else if(status==2){
+          /*validation error*/
+          this.errors=msgs;
+          this.snackbar=true;
+        }
+      }
+    },
+    addmylead: async function(){
+      if(this.$refs.form.validate()){
+        this.btnloading=true;
+        var token = localStorage.getItem('bsdapitoken');
         var formdata = new FormData();
+        
         formdata.append("firstname", this.first);
         formdata.append("lastname", this.last);
         formdata.append("email", this.email);
+        formdata.append("assigned_id", this.assigned_to.id);
+        formdata.append("brand_id", this.brand.id);
+        formdata.append("title", this.title);
+        formdata.append("company", this.company);
+        formdata.append("mobile", this.mobile);
+        formdata.append("company", this.company);
         formdata.append("website", this.website);
-        formdata.append("lead_tag", this.tag);
+        formdata.append("lead_status", this.lead_status);
+        formdata.append("industry", this.Industry);
+        formdata.append("total_employees", this.total_employees);
+        formdata.append("annual_revenue", this.annual_revenue);
+        formdata.append("ratings", this.ratings);
+        formdata.append("skype_id", this.skype_id);
+        formdata.append("twitter", this.twitter);
+        formdata.append("secondary_email", this.secondary_email);
+        formdata.append("street", this.street);
+        formdata.append("city", this.city);
+        formdata.append("state", this.state);
+        formdata.append("zip_code", this.zip_code);
+        formdata.append("country", this.country);
+        formdata.append("currency", this.currency);
+        formdata.append("description", this.description);
         var requestOptions = {
           method: 'POST',
           body: formdata,
           redirect: 'follow',
-          //mode: 'no-cors',
+          mode: 'no-cors',
         };
-        fetch(`${this.$parent.apipath}leads/create-update`, requestOptions)
+        fetch(`${this.$parent.apipath}leads/create-update?api_token=${token}`, requestOptions)
           .then(response => response.json())
           .then(result => {
+            console.log(result);
             if(result.status){
               this.$router.push({name:'auth.leads.listing'});
             }
@@ -432,8 +508,8 @@ email:'',
 mobile:'',
 company:'',
 title:'',
-brand:{},
-assigned_to:{},
+brand:'',
+assigned_to:'',
 lead_source:'',
 lead_status:'',
 website:'',
