@@ -168,11 +168,41 @@
             </v-list-item-content>
           </template>
           <v-list>
-            <v-list-item exact link :to="{name:'auth.quote.add'}">
+            <v-list-item exact link :to="{name:'auth.quote.add',params:{id:0}}">
               <v-list-item-title>Add Quote</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
+
+      </v-list-item>
+      <v-list-item class="pa-0" link :to="{name:'auth.quote.listing'}">
+        <v-menu 
+        open-on-hover
+        offset-x
+        style="max-width: 600px"
+        :close-on-content-click="false"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-list-item-icon color="primary"
+                  dark
+                  class=" d-block"
+                  style="width: 100%;text-align: center;"
+                  v-bind="attrs"
+                  v-on="on">
+              <v-icon v-text="'mdi-format-quote-close-outline'"></v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>Quote</v-list-item-title>
+            </v-list-item-content>
+          </template>
+          <v-list>
+            <v-list-item exact link :to="{name:'auth.quote.add',params:{id:0}}">
+              <v-list-item-title>Add Quote</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        
       </v-list-item>
       <v-list-item class="pa-0" link :to="{name:'auth.admin.users.main'}">
         <v-menu 

@@ -358,6 +358,10 @@ export default {
   },
   mounted(){
     this.getleads();
+    if(this.$route.params.id && this.$route.params.id>0)
+    {
+      this.get_data(this.$route.params.id);
+    }
   },
   methods:{
     getleads: async function()
@@ -381,8 +385,9 @@ export default {
       this.country=data.country;
       this.owner=data.sales.email;
       this.owner_id= data.sales.id;
+      this.leads=data.id;
       
-        console.log(this.leads);
+        console.log(data);
     }, 
 deleterow(itemk){
 	this.desserts.splice(itemk, 1);

@@ -18,6 +18,36 @@ lazy-validation
 
 <v-row>
 <v-col
+    class="d-flex pb-0"
+    cols="12"
+    sm="6"
+  >
+    <v-select
+      v-model="leads"
+      :items="all_leads"
+      :rules="[rules.required]"
+      item-text="email"
+      item-value="id"
+      label="Leads"
+      outlined
+      disabled
+      clearable
+      return-object
+    ></v-select>
+  </v-col>
+  <v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="company"
+    label="Company"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
+<v-col
   cols="12"
   sm="6"
   class="pb-0"
@@ -53,40 +83,153 @@ lazy-validation
   <v-text-field
     v-model="email"
     :rules="[rules.required, rules.email]"
+    disabled
     label="E-mail"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="owner"
+    disabled
+    :rules="[rules.email]"
+    label="Lead Assigned To"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="mobile"
+    label="Mobile"
+    outlined
+    clearable
+  ></v-text-field>
+    <h2>Address</h2>
+</v-col>
+
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="street"
+    label="Street"
+    outlined
+    clearable
+  ></v-text-field>
+  
+</v-col>
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="city"
+    label="City"
+    outlined
+    clearable
+  ></v-text-field>
+  
+</v-col>
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="state"
+    label="State"
     outlined
     clearable
   ></v-text-field>
 </v-col>
 
 <v-col
-    class="d-flex pb-0"
-    cols="12"
-    sm="6"
-  >
-    <v-select
-      v-model="tag"
-      :items="items"
-      :rules="[rules.required]"
-      label="Status"
-      outlined
-      clearable
-    ></v-select>
-  </v-col>
-
- <v-col
   cols="12"
-  sm="12"
+  sm="6"
   class="pb-0"
 >
   <v-text-field
-    v-model="website"
-    label="Website"
-    :rules="[rules.required]"
+    v-model="zip_code"
+    label="Zip Code"
     outlined
     clearable
   ></v-text-field>
 </v-col>
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="country"
+    label="Country"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="description"
+    label="Description"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
+
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="currency"
+    label="Currency"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
+
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="shipping"
+    label="Shipping"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="vat"
+    label="VAT"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>  
 
 <v-col
   cols="12"
@@ -207,24 +350,48 @@ mdi-delete-outline
 </template>
 
 <script>
+import usersservice from '@/api/auth/admin/quotes';
 export default {
   name: 'auth.quote.add',
   components: {
     //HelloWorld
   },
   mounted: async function (){
+    this.getleads();
     let id = this.$route.params.id;
     var ff = await fetch(`${this.$parent.apipath}quotes/get/${id}`).then(function(e){
       return e.json();
     })
+console.log(ff);
+    this.company=ff.company;
     this.first=ff.firstname;
     this.last=ff.lastname;
     this.email=ff.email;
     this.website=ff.website;
-    this.tag=ff.qoute_status;
+    this.city=ff.city;
+    this.state=ff.state;
+    this.zip_code=ff.zip_code;
+    this.country=ff.country;
+    this.description=ff.description;
+    this.currency=ff.currency;
+    this.vat=ff.vat;
+    this.shipping=ff.shipping;
     this.desserts=ff.items;
+    this.street=ff.street;
+    this.mobile=ff.mobile;
+    this.owner=ff.lead.sales.email;
+    this.owner_id=ff.lead.sales.id;
+    this.leads=ff.lead.id;
+
   },
   methods:{
+    getleads: async function()
+    {
+      this.all_leads =await usersservice.allleads();
+      this.all_leads = this.all_leads.data;
+
+    },
+
 deleterow(itemk){
 	this.desserts.splice(itemk, 1);
 },
@@ -244,8 +411,20 @@ price:0
         formdata.append("firstname", this.first);
         formdata.append("lastname", this.last);
         formdata.append("email", this.email);
-        formdata.append("website", this.website);
-        formdata.append("qoute_status", this.tag);
+        formdata.append("company", this.company);
+        formdata.append("owner", this.owner_id);
+        formdata.append("lead_id", this.leads);
+        formdata.append("mobile", this.mobile);
+        formdata.append("street", this.street);
+        formdata.append("city", this.city);
+        formdata.append("state", this.state);
+        formdata.append("zip_code", this.zip_code);
+        formdata.append("country", this.country);
+        formdata.append("currency", this.currency);
+        formdata.append("shipping", this.shipping);
+        formdata.append("vat", this.vat);
+        formdata.append("description", this.description);
+   
         for(var i=0;i<this.desserts.length;i++){
 	formdata.append("items["+i+"][id]", this.desserts[i].id);
 	formdata.append("items["+i+"][item]", this.desserts[i].item);
@@ -282,10 +461,25 @@ qty:0,
 price:0
 }
 ],
+owner_id:'',
+term_id:'',
+shipping:'',
+vat:'',
+description:'',
+leads:'',
+mobile:'',
+company:'',
+street:'',
+currency:'',
+city:'',
+state:'',
+country:'',
+zip_code:'',
+owner:'',
 first:'',
 last:'',
 email:'',
-tag:'',
+
 website:'',
 bread: [
 {
@@ -318,6 +512,7 @@ exact:true,
       },
 
       items: ['Open', 'CLose'],
+      all_leads:[],
     }
   },
 }

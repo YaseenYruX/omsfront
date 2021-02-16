@@ -65,7 +65,7 @@ export default [
         component: () => import('../views/Quotes/Index.vue'),
       },
       {
-        path: 'add',
+        path: 'add/:id',
         component: () => import('../views/Quotes/Add.vue'),
         name: 'auth.quote.add',
       },
@@ -74,6 +74,7 @@ export default [
         component: () => import('../views/Quotes/Update.vue'),
         name: 'auth.quote.update',
       },
+
     ]
   },
   {
@@ -90,6 +91,11 @@ export default [
         path: 'giveprice/:id',
         name: 'auth.purchaser.unanswered.giveprice',
         component: () => import('../views/Purchaser/GivePrice.vue'),
+      },
+      {
+        path: '',
+        name: 'auth.purchaser.listing',
+        component: () => import('../views/Purchaser/index.vue'),
       },
     ]
   },

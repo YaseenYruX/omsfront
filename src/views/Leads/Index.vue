@@ -20,7 +20,7 @@ disable-pagination
 :loading="loading"
 class="elevation-1"
 >
-<template v-slot:item.lead_tag="{ item }">
+<!-- <template v-slot:item.lead_tag="{ item }">
 <v-chip
   color="green"
   outlined
@@ -39,7 +39,7 @@ class="elevation-1"
   v-if="item.lead_tag=='NoGo'"
   v-text="item.lead_tag"
 ></v-chip>
-</template>
+</template> -->
 <template v-slot:item.actions="{ item }">
 <v-btn
   dark
@@ -61,6 +61,18 @@ class="elevation-1"
 >
   <v-icon dark>
     mdi-delete-outline
+  </v-icon>
+</v-btn>
+<v-btn
+  dark
+  x-small
+  icon
+  color="success"
+  link
+  :to="{name:'auth.quote.add',params:{id:item.id}}"
+>
+  <v-icon dark>
+    mdi-account-convert
   </v-icon>
 </v-btn>
 </template>
@@ -157,10 +169,10 @@ sortable: true,
 value: 'email',
 },
 {
-text: 'Tag',
+text: 'Source',
 align: 'center',
 sortable: true,
-value: 'lead_tag',
+value: 'lead_source',
 },
 {
 text: 'Action',
@@ -212,6 +224,10 @@ deletebrand: async function (id){
     this.getDataFromApi();
   }
 },
+convert: async function(id)
+{
+  console.log(id);
+},
 getDataFromApi () {
 this.loading = true
 this.fakeApiCall().then(data => {
@@ -219,6 +235,7 @@ this.desserts = data.data
 this.totalpages = data.last_page
 this.totalDesserts = data.total
 this.loading = false
+
 })
 },
 fakeApiCall(){

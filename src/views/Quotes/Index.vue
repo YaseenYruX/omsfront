@@ -88,7 +88,7 @@ bottom
 right
 fixed
 link
-:to="{name:'auth.quote.add'}"
+:to="{name:'auth.quote.add',params:{id:0}}"
 >
 <v-icon>mdi-plus</v-icon>
 </v-btn>
