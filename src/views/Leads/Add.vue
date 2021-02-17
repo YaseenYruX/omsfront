@@ -353,6 +353,17 @@ class="pb-0"
     clearable
   ></v-text-field>
 </v-col>
+<v-col
+    cols="12"
+    md="6"
+  >
+    <v-textarea
+      v-model="additional_details"
+      name="additional_details"
+      label="Additional Details"
+      hint="Additional Details"
+    ></v-textarea>
+  </v-col>
  <v-col
   cols="12"
   sm="12"
@@ -428,6 +439,7 @@ export default {
           country:this.country,
           currency:this.currency,
           description:this.description,
+          additional_details:this.additional_details,
           lead_source:this.lead_source
         }).then(function(e){
 
@@ -481,6 +493,7 @@ export default {
         formdata.append("zip_code", this.zip_code);
         formdata.append("country", this.country);
         formdata.append("currency", this.currency);
+        formdata.append("additional_details",this.additional_details);
         formdata.append("description", this.description);
         var requestOptions = {
           method: 'POST',
@@ -502,6 +515,7 @@ export default {
   },
   data () {
     return {
+additional_details:'',
 first:'',
 last:'',
 email:'',

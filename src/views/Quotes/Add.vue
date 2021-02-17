@@ -32,6 +32,7 @@ lazy-validation
       v-on:change="get_data(`${leads.id}`)"
       outlined
       clearable
+      :disabled="parseInt($route.params.id)>0"
       return-object
     ></v-select>
   </v-col>
@@ -229,7 +230,23 @@ lazy-validation
   ></v-text-field>
 </v-col>  
 
- 
+ <v-col
+    class="d-flex pb-0"
+    cols="12"
+    sm="6"
+  >
+    <v-select
+      v-model="quote_status"
+      :items="status"
+      :rules="[rules.required]"
+      label="Status"
+      item-value="id"
+      item-text="name"
+      outlined
+      clearable
+      return-object
+    ></v-select>
+  </v-col>
 
 <v-col
   cols="12"
@@ -250,10 +267,14 @@ height="300px"
         SKU
       </th>
       <th class="text-left">
-        Qty
+        Condition
       </th>
       <th class="text-left">
-        Price
+        Qty
+      </th>
+      
+      <th class="text-left">
+        Target Price
       </th>
       <th class="text-left">
         Total
@@ -277,6 +298,12 @@ v-model="item.item"
 <td>
 <v-text-field
 v-model="item.sku"
+:rules="[rules.required]"
+></v-text-field>
+</td>
+<td>
+<v-text-field
+v-model="item.conditions"
 :rules="[rules.required]"
 ></v-text-field>
 </td>
@@ -360,10 +387,21 @@ export default {
     this.getleads();
     if(this.$route.params.id && this.$route.params.id>0)
     {
+      this.isDisabled(this.$route.params.id);
       this.get_data(this.$route.params.id);
+    }
+    else
+    {
+      this.isDisabled(0);
+
     }
   },
   methods:{
+    isDisabled(id)
+    {
+      var re = id>0?true:false;
+      return re;
+    },
     getleads: async function()
     {
       this.all_leads =await usersservice.allleads();
@@ -386,6 +424,7 @@ export default {
       this.owner=data.sales.email;
       this.owner_id= data.sales.id;
       this.leads=data.id;
+      this.quote_status=data.quote_status;
       
         console.log(data);
     }, 
@@ -397,6 +436,7 @@ this.desserts.push({
 id:0,
 item:'',
 sku:'',
+conditions:'',
 qty:0,
 price:0
 });
@@ -412,7 +452,7 @@ price:0
         formdata.append("email", this.email);
         formdata.append("company", this.company);
         formdata.append("owner", this.owner_id);
-        formdata.append("lead_id", this.leads.id);
+        formdata.append("lead_id", this.leads);
         formdata.append("mobile", this.mobile);
         formdata.append("street", this.street);
         formdata.append("city", this.city);
@@ -422,11 +462,13 @@ price:0
         formdata.append("currency", this.currency);
         formdata.append("shipping", this.shipping);
         formdata.append("vat", this.vat);
+        formdata.append("quote_status",this.quote_status.id);
         formdata.append("description", this.description);
         for(var i=0;i<this.desserts.length;i++){
 	formdata.append("items["+i+"][id]", this.desserts[i].id);
 	formdata.append("items["+i+"][item]", this.desserts[i].item);
 	formdata.append("items["+i+"][sku]", this.desserts[i].sku);
+  formdata.append("items["+i+"][conditions]", this.desserts[i].conditions);
 	formdata.append("items["+i+"][qty]", this.desserts[i].qty);
 	formdata.append("items["+i+"][price]", this.desserts[i].price);
         }
@@ -454,10 +496,12 @@ desserts: [
 id:0,
 item:'',
 sku:'',
+conditions:'',
 qty:0,
 price:0
 }
 ],
+showid:0,
 owner_id:'',
 term_id:'',
 shipping:'',
@@ -476,6 +520,7 @@ owner:'',
 first:'',
 last:'',
 email:'',
+quote_status:1,
 
 website:'',
 bread: [
@@ -508,7 +553,7 @@ exact:true,
         },
       },
 
-      items: ['Open', 'CLose'],
+      status: [{id:1,name:'Open'},{id:2,name:'Close'},{id:3,name:'Pending'}],//{1:'Open',2:'Close',3:'Pending'},
       all_leads:[],
     }
   },

@@ -250,6 +250,9 @@ height="300px"
         SKU
       </th>
       <th class="text-left">
+        Condition
+      </th>
+      <th class="text-left">
         Qty
       </th>
       <th class="text-left">
@@ -277,6 +280,12 @@ v-model="item.item"
 <td>
 <v-text-field
 v-model="item.sku"
+:rules="[rules.required]"
+></v-text-field>
+</td>
+<td>
+<v-text-field
+v-model="item.conditions"
 :rules="[rules.required]"
 ></v-text-field>
 </td>
@@ -400,6 +409,7 @@ this.desserts.push({
 id:0,
 item:'',
 sku:'',
+conditions:'',
 qty:0,
 price:0
 });
@@ -429,6 +439,7 @@ price:0
 	formdata.append("items["+i+"][id]", this.desserts[i].id);
 	formdata.append("items["+i+"][item]", this.desserts[i].item);
 	formdata.append("items["+i+"][sku]", this.desserts[i].sku);
+  formdata.append("items["+i+"][conditions]", this.desserts[i].conditions);
 	formdata.append("items["+i+"][qty]", this.desserts[i].qty);
 	formdata.append("items["+i+"][price]", this.desserts[i].price);
         }
@@ -457,6 +468,7 @@ desserts: [
 id:0,
 item:'',
 sku:'',
+conditions:'',
 qty:0,
 price:0
 }

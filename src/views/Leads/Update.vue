@@ -354,6 +354,17 @@ class="pb-0"
   ></v-text-field>
 </v-col>
  <v-col
+    cols="12"
+    md="6"
+  >
+    <v-textarea
+      v-model="additional_details"
+      name="additional_details"
+      label="Additional Details"
+      hint="Additional Details"
+    ></v-textarea>
+  </v-col>
+ <v-col
   cols="12"
   sm="12"
   class="pb-0"
@@ -419,6 +430,7 @@ export default {
         this.currency=ff.currency;
         this.description=ff.description;
         this.lead_source=ff.lead_source;
+        this.additional_details=ff.additional_details;
   },
   watch:{
     brand:async function(){
@@ -459,6 +471,7 @@ export default {
           country:this.country,
           currency:this.currency,
           description:this.description,
+          additional_details:this.additional_details,
           lead_source:this.lead_source
         }).then(function(e){
 
@@ -486,6 +499,7 @@ export default {
   data () {
     return {
 id:'',
+additional_details:'',
 first:'',
 last:'',
 email:'',

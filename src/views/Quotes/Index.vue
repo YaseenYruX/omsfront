@@ -20,19 +20,22 @@ disable-pagination
 :loading="loading"
 class="elevation-1"
 >
-<template v-slot:item.qoute_status="{ item }">
+<template v-slot:item.quote_status="{ item }">
 <v-chip
   color="green"
   outlined
-  v-if="item.qoute_status=='Open'"
-  v-text="item.qoute_status"
-></v-chip>
+  v-if="item.quote_status==1"
+>Open</v-chip>
 <v-chip
   color="red"
   outlined
-  v-if="item.qoute_status=='CLose'"
-  v-text="item.qoute_status"
-></v-chip>
+  v-if="item.quote_status==2"
+>Close</v-chip>
+<v-chip
+  color="orange"
+  outlined
+  v-if="item.quote_status==3"
+>Pending</v-chip>
 </template>
 <template v-slot:item.actions="{ item }">
 <v-btn
@@ -153,7 +156,7 @@ value: 'email',
 text: 'Status',
 align: 'center',
 sortable: true,
-value: 'qoute_status',
+value: 'quote_status',
 },
 {
 text: 'Action',
