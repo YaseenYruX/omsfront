@@ -48,10 +48,10 @@
 
         <v-list>
           <v-list-item link :to="{name:'auth.sales.leads.list'}">
-            <v-list-item-title><v-icon>mdi-plus</v-icon>Lead</v-list-item-title>
+            <v-list-item-title><v-icon>mdi-plus</v-icon>UnAswered</v-list-item-title>
           </v-list-item>
           <v-list-item link :to="{name:'auth.sales.quotes.list'}">
-            <v-list-item-title><v-icon>mdi-plus</v-icon>Quote</v-list-item-title>
+            <v-list-item-title><v-icon>mdi-plus</v-icon>Answered</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>

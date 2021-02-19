@@ -229,8 +229,9 @@ Close
 </div>
 </template>
 <script>
+import purchaserservice from '@/api/auth/purchaser/quoteservice';
 export default {
-name: 'auth.purchaser.unanswered.giveprice',
+name: 'auth.purchaser.quotes.giveprice',
 components: {
 //HelloWorld
 },
@@ -261,9 +262,13 @@ this.snackbar=true;
 },
 mounted: async function (){
 let id = this.$route.params.id;
-var ff = await fetch(`${this.$parent.apipath}quotes/get/${id}`).then(function(e){
-  return e.json();
-})
+// var ff = await fetch(`${this.$parent.apipath}quotes/get/${id}`).then(function(e){
+//   return e.json();
+
+// })
+let token = localStorage.getItem('bsdapitoken');
+var ff = await purchaserservice.getquote(id,`?api_token=${token}`);
+
 this.first=ff.firstname;
 this.last=ff.lastname;
 this.email=ff.email;
@@ -289,19 +294,19 @@ website:'',
 bread: [
 {
 text: 'Dashboard',
-to: {name:'Home'},
+to: {name:'auth.purchaser.dashboard'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Unanswered Quotes',
-to: {name:'auth.purchaser.unanswered'},
+to: {name:'auth.purchaser.quotes.unanswered'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Give Prices',
-to: {name:'auth.purchaser.unanswered.giveprice'},
+to: {name:'auth.purchaser.unanswered.quotes.giveprice'},
 disabled:false,
 exact:true,
 },

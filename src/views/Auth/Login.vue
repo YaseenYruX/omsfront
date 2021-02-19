@@ -110,6 +110,10 @@ export default {
             {
               this.$router.push({name:'auth.admin.users.main'});
             }
+            else if(logindetail.user.user_type==3)
+            {
+              this.$router.push({name:'auth.purchaser.dashboard'});
+            }
             else if(logindetail.user.user_type==4)
             {
               this.$router.push({name:'auth.sales.dashboard'});

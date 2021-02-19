@@ -82,16 +82,16 @@ export default [
     name: 'auth.purchaser.main',
     component: () => import('../views/Purchaser/Main.vue'),
     children:[
-      {
-        path: 'unanswered',
-        name: 'auth.purchaser.unanswered',
-        component: () => import('../views/Purchaser/Unanswered.vue'),
-      },
-      {
-        path: 'giveprice/:id',
-        name: 'auth.purchaser.unanswered.giveprice',
-        component: () => import('../views/Purchaser/GivePrice.vue'),
-      },
+      // {
+      //   path: 'unanswered',
+      //   name: 'auth.purchaser.unanswered',
+      //   component: () => import('../views/Purchaser/Unanswered.vue'),
+      // },
+      // {
+      //   path: 'giveprice/:id',
+      //   name: 'auth.purchaser.unanswered.giveprice',
+      //   component: () => import('../views/Purchaser/GivePrice.vue'),
+      // },
       {
         path: '',
         name: 'auth.purchaser.listing',

@@ -26,7 +26,7 @@ class="elevation-1"
   x-small
   icon
   color="primary"
-  :to="{ name:'auth.purchaser.unanswered.giveprice' ,params:{id:item.id}}"
+  :to="{ name:'auth.purchaser.quotes.giveprice' ,params:{id:item.id}}"
 >
   <v-icon dark>
     mdi-pencil-plus
@@ -63,8 +63,9 @@ class="pt-0"
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
 //import Swal from 'sweetalert2'
+import purchaserservice from '@/api/auth/purchaser/quoteservice';
 export default {
-name: 'auth.purchaser.unanswered',
+name: 'auth.purchaser.quotes.unanswered',
 components: {
 //HelloWorld
 },
@@ -73,13 +74,13 @@ return {
 bread: [
 {
 text: 'Dashboard',
-to: {name:'Home'},
+to: {name:'auth.purchaser.dashboard'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Unanswered Quotes',
-to: {name:'auth.purchaser.unanswered'},
+to: {name:'auth.purchaser.quotes.unanswered'},
 disabled:false,
 exact:true,
 },
@@ -151,9 +152,11 @@ fakeApiCall(){
   if(this.options.sortDesc.length==1){
     _sortstr=`&sortcol=${this.options.sortBy[0]}&sorttype=${this.options.sortDesc[0]===true?'desc':'asc'}`
   }
-  return fetch(`${this.$parent.apipath}purchaser/unanswered?page=${this.page}&perpage=${this.perpage}${_sortstr}`).then(function(e){
-    return e.json();
-  })
+  let token = localStorage.getItem('bsdapitoken');
+  return purchaserservice.getunasweredquotes(`?api_token=${token}&page=${this.page}&perpage=${this.perpage}${_sortstr}`);
+  // return fetch(`${this.$parent.apipath}purchaser/quotes/unanswered?page=${this.page}&perpage=${this.perpage}${_sortstr}`).then(function(e){
+  //   return e.json();
+  // })
 },
 handlePageChange(value){
   this.page = value;

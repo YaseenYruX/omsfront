@@ -2,6 +2,7 @@
   <v-app>
     <adminbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==1" :loggedindetail="loggedindetail" />
     <salesbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==4" :loggedindetail="loggedindetail" />
+    <purchaserbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==3" :loggedindetail="loggedindetail" />
     <v-main>
       <router-view @logineventsuccess="testlogin"/>
     </v-main>
@@ -10,12 +11,14 @@
 <script>
 import adminbar from '@/views/Sidebars/adminbar.vue'
 import salesbar from '@/views/Sidebars/salesbar.vue'
+import purchaserbar from '@/views/Sidebars/purchaserbar.vue'
 import authservice from '@/api/auth/login';
 export default {
   name: 'App',
 
   components: {
     adminbar,
+    purchaserbar,
     salesbar
   },
 
