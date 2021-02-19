@@ -42,7 +42,21 @@ lazy-validation
     clearable
   ></v-text-field>
 </v-col>
-
+<v-col
+          cols="12"
+          sm="12"
+        >
+          <v-select
+            v-model="value"
+            :items="items"
+            chips
+            item-value="id"
+            item-text="name"
+            label="Brands"
+            multiple
+            outlined
+          ></v-select>
+        </v-col>
 <v-col
   cols="12"
   sm="12"
@@ -129,10 +143,14 @@ export default {
       });
     },
   },
-  mounted: function () {
+  mounted: async function () {
+  this.items = await this.brands();
+    
   this.$nextTick(function () {
+
     var all_type = ['Admin','BUH','Purchaser','Sales'];
     this.bread[1].text = all_type[this.user_type-1];
+
   })
 },
   methods:{
@@ -144,6 +162,7 @@ export default {
           name:this.name,
           email:this.email,
           password:this.password,
+          brands:this.value,
           user_type:this.user_type
         }).then(function(e){
           return {status:e.status,msgs:e.data};
@@ -167,11 +186,19 @@ export default {
           this.snackbar=true;
         }
       }
+    },
+    brands: async function(){
+   let brands = await usersservice.getbrands().then(function(e){
+       return e.data;  
+       });
+   return brands;
     }
   },
   data () {
     return {
 name:'',
+value:[],
+items:[],
 email:'',
 password:'',
 user_type:this.$route.params.usertype,

@@ -10,6 +10,16 @@ class usersservice{
 			return error;
 		});
 	}
+	getbrands()
+	{
+		return axios.get(`${connection.apiurl}brands`)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			return error;
+		});
+	}
 	getsummary(params){
 		return axios.get(`${connection.apiurl}auth/admin/users-summary${params}`)
 		.then(function (response) {
