@@ -34,23 +34,7 @@ lazy-validation
       return-object
     ></v-select>
   </v-col>
-  <v-col
-  cols="12"
-  sm="6"
-  class="pb-0"
->
-  <v-select
-      v-model="assigned_to"
-      :items="assigned_to_sales"
-      :rules="[rules.required]"
-      item-text="email"
-      item-value="id"
-      label="Assigned to"
-      outlined
-      clearable
-      return-object
-    ></v-select>
-</v-col>
+  
 <v-col
   cols="12"
   sm="12"
@@ -403,9 +387,9 @@ class="pb-0"
 <script>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
-import usersservice from '@/api/auth/admin/lead';
+import leadservice from '@/api/auth/sales/leadservice';
 export default {
-  name: 'auth.leads.add',
+  name: 'auth.sales.leads.add',
   components: {
     //HelloWorld
   },
@@ -413,22 +397,19 @@ export default {
     this.getbrands();
   },
   watch:{
-    brand:async function(){
-      this.assigned_to_sales = await usersservice.getsalesperson();
-    }
   },
   methods:{
     getbrands: async function(){
-      this.brands =await usersservice.getbrands();
+      this.brands =await leadservice.getbrands(`?api_token=${localStorage.getItem('bsdapitoken')}`);
     },
     addlead: async function(){
      
       if(this.$refs.form.validate()){
         this.btnloading=true;
         var token = localStorage.getItem('bsdapitoken');
-        const {status,msgs} = await  usersservice.addlead(token,{
+        const {status,msgs} = await  leadservice.addlead(token,{
           brand_id:this.brand.id,
-          assigned_id : this.assigned_to.id,
+          // assigned_id : this.assigned_to.id,
           lastname:this.last,
           firstname:this.first,
           email:this.email,
@@ -451,8 +432,8 @@ export default {
           country:this.country,
           currency:this.currency,
           description:this.description,
-          additional_details:this.additional_details,
           lead_time:this.lead_time,
+          additional_details:this.additional_details,
           lead_source:this.lead_source
         }).then(function(e){
 
@@ -464,7 +445,7 @@ export default {
         this.errors={};
         if(status==1){
           /*user created*/
-          this.$router.push({name:'auth.leads.listing'});
+          this.$router.push({name:'auth.sales.leads.list'});
         }else if(status==0){
           /*personal error*/
           this.errors['common']=[msgs];
@@ -480,7 +461,6 @@ export default {
   data () {
     return {
 additional_details:'',
-lead_time:'',
 first:'',
 last:'',
 email:'',
@@ -492,6 +472,7 @@ assigned_to:'',
 lead_source:'',
 lead_status:'',
 website:'',
+lead_time:'',
 Industry:'',
 ratings:'',
 total_employees:'',
@@ -509,19 +490,19 @@ description:'',
 bread: [
 {
 text: 'Dashboard',
-to: {name:'Home'},
+to: {name:'auth.sales.dashboard'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Leads',
-to: {name:'auth.leads.listing'},
+to: {name:'auth.sales.leads.list'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Add',
-to: {name:'auth.leads.add'},
+to: {name:'auth.sales.leads.add'},
 disabled:false,
 exact:true,
 },

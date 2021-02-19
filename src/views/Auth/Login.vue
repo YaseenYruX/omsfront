@@ -106,7 +106,14 @@ export default {
               details:logindetail.user,
             }
             this.$emit("logineventsuccess", loggedindetail);
-            this.$router.push({name:'auth.admin.users.main'});
+            if(logindetail.user.user_type==1)
+            {
+              this.$router.push({name:'auth.admin.users.main'});
+            }
+            else if(logindetail.user.user_type==4)
+            {
+              this.$router.push({name:'auth.sales.dashboard'});
+            }
           }else{
             this.erorrs.email=logindetail.data;
             this.snackbar = true;

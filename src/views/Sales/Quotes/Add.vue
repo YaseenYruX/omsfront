@@ -89,7 +89,7 @@ lazy-validation
     clearable
   ></v-text-field>
 </v-col>
-<v-col
+<!-- <v-col
   cols="12"
   sm="6"
   class="pb-0"
@@ -101,7 +101,7 @@ lazy-validation
     outlined
     clearable
   ></v-text-field>
-</v-col>
+</v-col> -->
 <v-col
   cols="12"
   sm="6"
@@ -228,6 +228,18 @@ lazy-validation
     outlined
     clearable
   ></v-text-field>
+</v-col>
+<v-col
+  cols="12"
+  sm="12"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="lead_time"
+    label="Lead Time"
+    outlined
+    clearable
+  ></v-text-field>
 </v-col>  
 <v-col
     cols="12"
@@ -276,9 +288,6 @@ height="300px"
       <th class="text-left">
         Item
       </th>
-      <th class="text-left">
-        SKU
-      </th>
       <th>
         Description
       </th>
@@ -322,11 +331,11 @@ height="300px"
 v-model="item.item"
 ></v-text-field>
 </td>
-<td>
+<!-- <td>
 <v-text-field
 v-model="item.sku"
 ></v-text-field>
-</td>
+</td> -->
 <td>
 <v-text-field
 v-model="item.description"
@@ -413,9 +422,9 @@ mdi-delete-outline
 </template>
 
 <script>
-import usersservice from '@/api/auth/admin/quotes';
+import quoteservice from '@/api/auth/sales/quoteservice';
 export default {
-  name: 'auth.quote.add',
+  name: 'auth.sales.quotes.add',
   components: {
     //HelloWorld
   },
@@ -431,22 +440,22 @@ export default {
   methods:{
     getbrands: async function ()
     {
-      this.all_brands= await usersservice.getbrands();
+      this.all_brands= await quoteservice.getbrands();
       this.all_brands = this.all_brands.data;
     },
     getconditions: async function()
     {
-      this.all_conditions= await usersservice.getconditions();
+      this.all_conditions= await quoteservice.getconditions();
     },
     getleads: async function()
     {
-      this.all_leads =await usersservice.allleads();
+      this.all_leads =await quoteservice.allleads();
       this.all_leads = this.all_leads.data;
 
     },
     get_data: async function(id)
     {
-      var data = await usersservice.getlead(id);
+      var data = await quoteservice.getlead(id);
       this.company=data.company;
       this.first=data.firstname;
       this.last=data.lastname;
@@ -457,13 +466,14 @@ export default {
       this.state=data.state;
       this.zip_code=data.zip_code;
       this.country=data.country;
-      this.owner=data.sales.email;
-      this.owner_id= data.sales.id;
+      // this.owner=data.sales.email;
+      // this.owner_id= data.sales.id;
       this.leads=data.id;
       this.currency=data.currency;
       this.description=data.description;
       this.quote_status=data.quote_status;
       this.additional_details=data.additional_details;
+      this.lead_time=data.lead_time;
       
      
     }, 
@@ -475,7 +485,7 @@ this.desserts.push({
 id:0,
 brand:'',
 item:'',
-sku:'',
+// sku:'',
 description:'',
 conditions:'',
 qty:0,
@@ -487,12 +497,13 @@ price:0
 
       if(this.$refs.form.validate()){
         this.btnloading=true;
+        var token = localStorage.getItem('bsdapitoken');
         var formdata = new FormData();
         formdata.append("firstname", this.first);
         formdata.append("lastname", this.last);
         formdata.append("email", this.email);
         formdata.append("company", this.company);
-        formdata.append("owner", this.owner_id);
+        // formdata.append("owner", this.owner_id);
         formdata.append("lead_id", this.leads);
         formdata.append("mobile", this.mobile);
         formdata.append("street", this.street);
@@ -504,12 +515,13 @@ price:0
         formdata.append("shipping", this.shipping);
         formdata.append("vat", this.vat);
         formdata.append("quote_status",this.quote_status.id);
+        formdata.append("lead_time",this.lead_time);
         formdata.append("description", this.description);
         for(var i=0;i<this.desserts.length;i++){
 	formdata.append("items["+i+"][id]", this.desserts[i].id);
   formdata.append("items["+i+"][brand]", this.desserts[i].brand.id);
 	formdata.append("items["+i+"][item]", this.desserts[i].item);
-	formdata.append("items["+i+"][sku]", this.desserts[i].sku);
+	// formdata.append("items["+i+"][sku]", this.desserts[i].sku);
   formdata.append("items["+i+"][description]", this.desserts[i].description);
   formdata.append("items["+i+"][conditions]", this.desserts[i].conditions.id);
 	formdata.append("items["+i+"][qty]", this.desserts[i].qty);
@@ -521,11 +533,11 @@ price:0
           redirect: 'follow',
           //mode: 'no-cors',
         };
-        fetch(`${this.$parent.apipath}quotes/create-update`, requestOptions)
+        fetch(`${this.$parent.apipath}auth/sales/quotes/create-update?api_token=${token}`, requestOptions)
           .then(response => response.json())
           .then(result => {
             if(result.status){
-              this.$router.push({name:'auth.quote.listing'});
+              this.$router.push({name:'auth.sales.quotes.list'});
             }
           })
           //.catch(error => console.log('error', error));
@@ -539,7 +551,7 @@ desserts: [
 id:0,
 brand:'',
 item:'',
-sku:'',
+// sku:'',
 description:'',
 conditions:'',
 qty:0,
@@ -547,7 +559,7 @@ price:0
 }
 ],
 showid:0,
-owner_id:'',
+// owner_id:'',
 term_id:'',
 shipping:'',
 vat:'',
@@ -561,8 +573,9 @@ city:'',
 state:'',
 country:'',
 zip_code:'',
-owner:'',
+// owner:'',
 first:'',
+lead_time:'',
 last:'',
 email:'',
 quote_status:1,
@@ -571,19 +584,19 @@ website:'',
 bread: [
 {
 text: 'Dashboard',
-to: {name:'Home'},
+to: {name:'auth.sales.dashboard'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Quotes',
-to: {name:'auth.quote.listing'},
+to: {name:'auth.sales.quotes.list'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Add',
-to: {name:'auth.quote.add'},
+to: {name:'auth.sales.quotes.add'},
 disabled:false,
 exact:true,
 },

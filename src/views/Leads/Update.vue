@@ -447,8 +447,8 @@ export default {
         this.btnloading=true;
         var token = localStorage.getItem('bsdapitoken');
         const {status,msgs} = await  usersservice.updatelead(token,this.id,{
-          brand_id:this.brand.id,
-          assigned_id : this.assigned_to.id,
+          brand_id:(this.brand.id)?this.brand.id:this.brand,
+          assigned_id : this.assigned_to,
           lastname:this.last,
           firstname:this.first,
           email:this.email,

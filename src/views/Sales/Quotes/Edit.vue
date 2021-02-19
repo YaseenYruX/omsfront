@@ -17,7 +17,7 @@ lazy-validation
 >
 
 <v-row>
-  <v-col
+<v-col
     class="d-flex pb-0"
     cols="12"
     sm="6"
@@ -29,10 +29,9 @@ lazy-validation
       item-text="email"
       item-value="id"
       label="Leads"
-      v-on:change="get_data(`${leads.id}`)"
       outlined
+      disabled
       clearable
-      :disabled="parseInt($route.params.id)>0"
       return-object
     ></v-select>
   </v-col>
@@ -84,24 +83,26 @@ lazy-validation
   <v-text-field
     v-model="email"
     :rules="[rules.required, rules.email]"
+    disabled
     label="E-mail"
     outlined
     clearable
   ></v-text-field>
 </v-col>
-<v-col
+<!-- <v-col
   cols="12"
   sm="6"
   class="pb-0"
 >
   <v-text-field
     v-model="owner"
+    disabled
     :rules="[rules.email]"
     label="Lead Assigned To"
     outlined
     clearable
   ></v-text-field>
-</v-col>
+</v-col> -->
 <v-col
   cols="12"
   sm="6"
@@ -228,7 +229,19 @@ lazy-validation
     outlined
     clearable
   ></v-text-field>
-</v-col>  
+</v-col>
+<v-col
+  cols="12"
+  sm="12"
+  class="pb-0"
+>
+  <v-text-field
+    v-model="lead_time"
+    label="Lead Time"
+    outlined
+    clearable
+  ></v-text-field>
+</v-col>
 <v-col
     cols="12"
     md="6"
@@ -239,8 +252,8 @@ lazy-validation
       label="Additional Details"
       hint="Additional Details"
     ></v-textarea>
-  </v-col>
- <v-col
+  </v-col>  
+<v-col
     class="d-flex pb-0"
     cols="12"
     sm="6"
@@ -257,7 +270,6 @@ lazy-validation
       return-object
     ></v-select>
   </v-col>
-
 <v-col
   cols="12"
   sm="12"
@@ -276,10 +288,10 @@ height="300px"
       <th class="text-left">
         Item
       </th>
-      <th class="text-left">
+     <!--  <th class="text-left">
         SKU
-      </th>
-      <th>
+      </th> -->
+      <th class="text-left">
         Description
       </th>
       <th class="text-left">
@@ -288,9 +300,8 @@ height="300px"
       <th class="text-left">
         Qty
       </th>
-      
       <th class="text-left">
-        Target Price
+        Price
       </th>
       <th class="text-left">
         Total
@@ -305,7 +316,7 @@ height="300px"
       v-for="(item,itemk) in desserts"
       :key="itemk"
     >
-<td>
+    <td>
 <v-select
       v-model="item.brand"
       :items="all_brands"
@@ -322,18 +333,17 @@ height="300px"
 v-model="item.item"
 ></v-text-field>
 </td>
-<td>
+<!-- <td>
 <v-text-field
 v-model="item.sku"
 ></v-text-field>
-</td>
+</td> -->
 <td>
 <v-text-field
 v-model="item.description"
 ></v-text-field>
-</td> 
+</td>
 <td>
-
 <v-select
       v-model="item.conditions"
       :items="all_conditions"
@@ -413,60 +423,58 @@ mdi-delete-outline
 </template>
 
 <script>
-import usersservice from '@/api/auth/admin/quotes';
+import quoteservice from '@/api/auth/sales/quoteservice';
 export default {
-  name: 'auth.quote.add',
+  name: 'auth.sales.quotes.edit',
   components: {
     //HelloWorld
   },
-  mounted(){
+  mounted: async function (){
+    this.getconditions();
     this.getleads();
     this.getbrands();
-    this.getconditions();
-    if(this.$route.params.id && this.$route.params.id>0)
-    {
-      this.get_data(this.$route.params.id);
-    }
+    let id = this.$route.params.id;
+    var ff = await quoteservice.getquote(id);
+    this.company=ff.company;
+    this.first=ff.firstname;
+    this.last=ff.lastname;
+    this.email=ff.email;
+    this.website=ff.website;
+    this.city=ff.city;
+    this.state=ff.state;
+    this.zip_code=ff.zip_code;
+    this.country=ff.country;
+    this.description=ff.description;
+    this.currency=ff.currency;
+    this.vat=ff.vat;
+    this.shipping=ff.shipping;
+    this.desserts=ff.items;
+    this.street=ff.street;
+    this.mobile=ff.mobile;
+    // this.owner=ff.lead.sales.email;
+    // this.owner_id=ff.lead.sales.id;
+    this.leads=ff.lead.id;
+    this.quote_status= ff.quote_status;
+    console.log(this.desserts);
   },
   methods:{
     getbrands: async function ()
     {
-      this.all_brands= await usersservice.getbrands();
+      this.all_brands= await quoteservice.getbrands();
       this.all_brands = this.all_brands.data;
     },
     getconditions: async function()
     {
-      this.all_conditions= await usersservice.getconditions();
+      this.all_conditions= await quoteservice.getconditions();
+ 
     },
     getleads: async function()
     {
-      this.all_leads =await usersservice.allleads();
+      this.all_leads =await quoteservice.allleads();
       this.all_leads = this.all_leads.data;
 
     },
-    get_data: async function(id)
-    {
-      var data = await usersservice.getlead(id);
-      this.company=data.company;
-      this.first=data.firstname;
-      this.last=data.lastname;
-      this.email=data.email;
-      this.mobile=data.mobile;
-      this.street=data.street;
-      this.city=data.city;
-      this.state=data.state;
-      this.zip_code=data.zip_code;
-      this.country=data.country;
-      this.owner=data.sales.email;
-      this.owner_id= data.sales.id;
-      this.leads=data.id;
-      this.currency=data.currency;
-      this.description=data.description;
-      this.quote_status=data.quote_status;
-      this.additional_details=data.additional_details;
-      
-     
-    }, 
+
 deleterow(itemk){
 	this.desserts.splice(itemk, 1);
 },
@@ -475,7 +483,7 @@ this.desserts.push({
 id:0,
 brand:'',
 item:'',
-sku:'',
+// sku:'',
 description:'',
 conditions:'',
 qty:0,
@@ -483,7 +491,6 @@ price:0
 });
 },
     addquote: async function(){
-    
 
       if(this.$refs.form.validate()){
         this.btnloading=true;
@@ -492,7 +499,7 @@ price:0
         formdata.append("lastname", this.last);
         formdata.append("email", this.email);
         formdata.append("company", this.company);
-        formdata.append("owner", this.owner_id);
+        // formdata.append("owner", this.owner_id);
         formdata.append("lead_id", this.leads);
         formdata.append("mobile", this.mobile);
         formdata.append("street", this.street);
@@ -503,15 +510,17 @@ price:0
         formdata.append("currency", this.currency);
         formdata.append("shipping", this.shipping);
         formdata.append("vat", this.vat);
-        formdata.append("quote_status",this.quote_status.id);
         formdata.append("description", this.description);
+        formdata.append("quote_status", this.quote_status);
+   
         for(var i=0;i<this.desserts.length;i++){
-	formdata.append("items["+i+"][id]", this.desserts[i].id);
-  formdata.append("items["+i+"][brand]", this.desserts[i].brand.id);
+	// formdata.append("items["+i+"][id]", this.desserts[i].id);
+  formdata.append("items["+i+"][id]", this.desserts[i].id);
+  formdata.append("items["+i+"][brand]", (this.desserts[i].brand.id)?this.desserts[i].brand.id:this.desserts[i].brand);
 	formdata.append("items["+i+"][item]", this.desserts[i].item);
-	formdata.append("items["+i+"][sku]", this.desserts[i].sku);
+	// formdata.append("items["+i+"][sku]", this.desserts[i].sku);
   formdata.append("items["+i+"][description]", this.desserts[i].description);
-  formdata.append("items["+i+"][conditions]", this.desserts[i].conditions.id);
+  formdata.append("items["+i+"][conditions]", (this.desserts[i].conditions.id)?this.desserts[i].conditions.id:this.desserts[i].conditions);
 	formdata.append("items["+i+"][qty]", this.desserts[i].qty);
 	formdata.append("items["+i+"][price]", this.desserts[i].price);
         }
@@ -521,11 +530,12 @@ price:0
           redirect: 'follow',
           //mode: 'no-cors',
         };
-        fetch(`${this.$parent.apipath}quotes/create-update`, requestOptions)
+        let id = this.$route.params.id;
+        fetch(`${this.$parent.apipath}auth/sales/quotes/create-update/${id}?api_token=${localStorage.getItem('bsdapitoken')}`, requestOptions)
           .then(response => response.json())
           .then(result => {
             if(result.status){
-              this.$router.push({name:'auth.quote.listing'});
+              this.$router.push({name:'auth.sales.quotes.list'});
             }
           })
           //.catch(error => console.log('error', error));
@@ -539,15 +549,14 @@ desserts: [
 id:0,
 brand:'',
 item:'',
-sku:'',
+// sku:'',
 description:'',
 conditions:'',
 qty:0,
 price:0
 }
 ],
-showid:0,
-owner_id:'',
+// owner_id:'',
 term_id:'',
 shipping:'',
 vat:'',
@@ -561,12 +570,11 @@ city:'',
 state:'',
 country:'',
 zip_code:'',
-owner:'',
+// owner:'',
 first:'',
 last:'',
 email:'',
 quote_status:1,
-additional_details:'',
 website:'',
 bread: [
 {
@@ -582,8 +590,8 @@ disabled:false,
 exact:true,
 },
 {
-text: 'Add',
-to: {name:'auth.quote.add'},
+text: 'Update',
+to: {name:'auth.quote.update'},
 disabled:false,
 exact:true,
 },
@@ -598,7 +606,7 @@ exact:true,
         },
       },
 
-      status: [{id:1,name:'Open'},{id:2,name:'Close'},{id:3,name:'Pending'}],//{1:'Open',2:'Close',3:'Pending'},
+      status: [{id:1,name:'Open'},{id:2,name:'Close'},{id:3,name:'Pending'}],
       all_leads:[],
       all_conditions:[],
       all_brands:[],

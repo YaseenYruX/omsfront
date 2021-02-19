@@ -230,7 +230,23 @@ lazy-validation
     clearable
   ></v-text-field>
 </v-col>  
-
+<v-col
+    class="d-flex pb-0"
+    cols="12"
+    sm="6"
+  >
+    <v-select
+      v-model="quote_status"
+      :items="status"
+      :rules="[rules.required]"
+      label="Status"
+      item-value="id"
+      item-text="name"
+      outlined
+      clearable
+      return-object
+    ></v-select>
+  </v-col>
 <v-col
   cols="12"
   sm="12"
@@ -244,10 +260,16 @@ height="300px"
   <thead>
     <tr>
       <th class="text-left">
+        Brand
+      </th>
+      <th class="text-left">
         Item
       </th>
       <th class="text-left">
         SKU
+      </th>
+      <th class="text-left">
+        Description
       </th>
       <th class="text-left">
         Condition
@@ -271,34 +293,53 @@ height="300px"
       v-for="(item,itemk) in desserts"
       :key="itemk"
     >
+    <td>
+<v-select
+      v-model="item.brand"
+      :items="all_brands"
+      item-text="name"
+      item-value="id"
+      label="Brand"
+      outlined
+      clearable
+      return-object
+    ></v-select>
+</td>
 <td>
 <v-text-field
 v-model="item.item"
-:rules="[rules.required]"
 ></v-text-field>
 </td>
 <td>
 <v-text-field
 v-model="item.sku"
-:rules="[rules.required]"
 ></v-text-field>
 </td>
 <td>
 <v-text-field
-v-model="item.conditions"
-:rules="[rules.required]"
+v-model="item.description"
 ></v-text-field>
+</td>
+<td>
+<v-select
+      v-model="item.conditions"
+      :items="all_conditions"
+      item-text="flag_value"
+      item-value="id"
+      label="Condition"
+      outlined
+      clearable
+      return-object
+    ></v-select>
 </td>
 <td>
 <v-text-field
 v-model="item.qty"
-:rules="[rules.required]"
 ></v-text-field>
 </td>
 <td>
 <v-text-field
 v-model="item.price"
-:rules="[rules.required]"
 ></v-text-field>
 </td>
       <td>{{ parseFloat(item.qty*item.price).toFixed(2) }}</td>
@@ -361,17 +402,18 @@ mdi-delete-outline
 <script>
 import usersservice from '@/api/auth/admin/quotes';
 export default {
-  name: 'auth.quote.add',
+  name: 'auth.quote.update',
   components: {
     //HelloWorld
   },
   mounted: async function (){
+    this.getconditions();
     this.getleads();
+    this.getbrands();
     let id = this.$route.params.id;
     var ff = await fetch(`${this.$parent.apipath}quotes/get/${id}`).then(function(e){
       return e.json();
     })
-console.log(ff);
     this.company=ff.company;
     this.first=ff.firstname;
     this.last=ff.lastname;
@@ -391,9 +433,20 @@ console.log(ff);
     this.owner=ff.lead.sales.email;
     this.owner_id=ff.lead.sales.id;
     this.leads=ff.lead.id;
-
+    this.quote_status= ff.quote_status;
+    console.log(this.desserts);
   },
   methods:{
+    getbrands: async function ()
+    {
+      this.all_brands= await usersservice.getbrands();
+      this.all_brands = this.all_brands.data;
+    },
+    getconditions: async function()
+    {
+      this.all_conditions= await usersservice.getconditions();
+ 
+    },
     getleads: async function()
     {
       this.all_leads =await usersservice.allleads();
@@ -407,8 +460,10 @@ deleterow(itemk){
 addrow(){
 this.desserts.push({
 id:0,
+brand:'',
 item:'',
 sku:'',
+description:'',
 conditions:'',
 qty:0,
 price:0
@@ -434,12 +489,16 @@ price:0
         formdata.append("shipping", this.shipping);
         formdata.append("vat", this.vat);
         formdata.append("description", this.description);
+        formdata.append("quote_status", this.quote_status);
    
         for(var i=0;i<this.desserts.length;i++){
 	formdata.append("items["+i+"][id]", this.desserts[i].id);
+  formdata.append("items["+i+"][id]", this.desserts[i].id);
+  formdata.append("items["+i+"][brand]", (this.desserts[i].brand.id)?this.desserts[i].brand.id:this.desserts[i].brand);
 	formdata.append("items["+i+"][item]", this.desserts[i].item);
 	formdata.append("items["+i+"][sku]", this.desserts[i].sku);
-  formdata.append("items["+i+"][conditions]", this.desserts[i].conditions);
+  formdata.append("items["+i+"][description]", this.desserts[i].description);
+  formdata.append("items["+i+"][conditions]", (this.desserts[i].conditions.id)?this.desserts[i].conditions.id:this.desserts[i].conditions);
 	formdata.append("items["+i+"][qty]", this.desserts[i].qty);
 	formdata.append("items["+i+"][price]", this.desserts[i].price);
         }
@@ -466,8 +525,10 @@ price:0
 desserts: [
 {
 id:0,
+brand:'',
 item:'',
 sku:'',
+description:'',
 conditions:'',
 qty:0,
 price:0
@@ -491,7 +552,7 @@ owner:'',
 first:'',
 last:'',
 email:'',
-
+quote_status:1,
 website:'',
 bread: [
 {
@@ -523,8 +584,10 @@ exact:true,
         },
       },
 
-      items: ['Open', 'CLose'],
+      status: [{id:1,name:'Open'},{id:2,name:'Close'},{id:3,name:'Pending'}],
       all_leads:[],
+      all_conditions:[],
+      all_brands:[],
     }
   },
 }

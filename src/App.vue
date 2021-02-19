@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <adminbar @logoutauthparent="logoutauth" v-if="loggedin" :loggedindetail="loggedindetail" />
+    <adminbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==1" :loggedindetail="loggedindetail" />
+    <salesbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==4" :loggedindetail="loggedindetail" />
     <v-main>
       <router-view @logineventsuccess="testlogin"/>
     </v-main>
@@ -8,11 +9,14 @@
 </template>
 <script>
 import adminbar from '@/views/Sidebars/adminbar.vue'
+import salesbar from '@/views/Sidebars/salesbar.vue'
+import authservice from '@/api/auth/login';
 export default {
   name: 'App',
 
   components: {
-    adminbar
+    adminbar,
+    salesbar
   },
 
   data: () => ({
@@ -22,8 +26,8 @@ export default {
     drawer:false,
     mini: true,
   }),
-  mounted(){
-    this.$nextTick(function(){
+  mounted: async function(){
+    this.$nextTick(async function(){
       if(!localStorage.getItem('bsdapitoken')){
         if(!this.loggedin){
           this.$router.push({name:'auth.login'})
@@ -32,7 +36,8 @@ export default {
         this.apitoken=localStorage.getItem('bsdapitoken');
         this.loggedin=true;
         /*fetch user detail against api token here*/
-        this.loggedindetail={};
+        this.loggedindetail = await authservice.getuser(this.apitoken);
+        //this.loggedindetail={};
         /*fetch user detail against api token here end*/
       }
     })

@@ -20,6 +20,24 @@ class quotesservice{
 			return error;
 		});
 	}
+	getconditions(){
+		return axios.get(`${connection.apiurl}mflag/conditions?api_token=${localStorage.getItem('bsdapitoken')}`)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			return error;
+		});
+	}
+	getbrands(){
+		return axios.get(`${connection.apiurl}brands?api_token=${localStorage.getItem('bsdapitoken')}`)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			return error;
+		});
+	}
 	
 	
 }

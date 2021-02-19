@@ -34,23 +34,6 @@ lazy-validation
       return-object
     ></v-select>
   </v-col>
-  <v-col
-  cols="12"
-  sm="6"
-  class="pb-0"
->
-  <v-select
-      v-model="assigned_to"
-      :items="assigned_to_sales"
-      :rules="[rules.required]"
-      item-text="email"
-      item-value="id"
-      label="Assigned to"
-      outlined
-      clearable
-      return-object
-    ></v-select>
-</v-col>
 <v-col
   cols="12"
   sm="12"
@@ -365,7 +348,7 @@ class="pb-0"
     clearable
   ></v-text-field>
 </v-col>
-<v-col
+ <v-col
     cols="12"
     md="6"
   >
@@ -386,7 +369,7 @@ class="pb-0"
     elevation="1"
     large
     raised
-    @click="addlead"
+    @click="addmylead"
     :loading="btnloading"
     :disabled="btnloading"
   >Save</v-btn>
@@ -403,32 +386,64 @@ class="pb-0"
 <script>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
-import usersservice from '@/api/auth/admin/lead';
+import leadservice from '@/api/auth/sales/leadservice';
 export default {
-  name: 'auth.leads.add',
+  name: 'auth.sales.leads.edit',
   components: {
     //HelloWorld
   },
-  mounted(){
+  mounted: async function (){
+    let id = this.$route.params.id;
+    var token = localStorage.getItem('bsdapitoken');
+    var ff = await leadservice.leaddata(id,`?api_token=${token}`);
+    console.log(ff);
+    // var ff = await fetch(`${this.$parent.apipath}auth/sales/leads/get/${id}`).then(function(e){
+    //   return e.json();
+      
+    // })
     this.getbrands();
+        this.id=ff.id;
+        this.brand=ff.brand_id;
+        this.last=ff.lastname;
+        this.first=ff.firstname;
+        this.email=ff.email;
+        this.title=ff.title;
+        this.company=ff.company;
+        this.mobile=ff.mobile;
+        this.website=ff.website;
+        this.lead_status=ff.lead_status;
+        this.Industry=ff.Industry;
+        this.total_employees=ff.total_employees;
+        this.annual_revenue=ff.annual_revenue;
+        this.ratings=ff.ratings;
+        this.skype_id=ff.skype_id;
+        this.twitter=ff.twitter;
+        this.secondary_email=ff.secondary_email;
+        this.street=ff.street;
+        this.city=ff.city;
+        this.state=ff.state;
+        this.zip_code=ff.zip_code;
+        this.country=ff.country;
+        this.currency=ff.currency;
+        this.description=ff.description;
+        this.lead_source=ff.lead_source;
+        this.lead_time=ff.lead_time;
+        this.additional_details=ff.additional_details;
   },
   watch:{
-    brand:async function(){
-      this.assigned_to_sales = await usersservice.getsalesperson();
-    }
+  
   },
   methods:{
     getbrands: async function(){
-      this.brands =await usersservice.getbrands();
+      this.brands =await leadservice.getbrands();
     },
-    addlead: async function(){
-     
+    addmylead: async function(){
+  
       if(this.$refs.form.validate()){
         this.btnloading=true;
         var token = localStorage.getItem('bsdapitoken');
-        const {status,msgs} = await  usersservice.addlead(token,{
-          brand_id:this.brand.id,
-          assigned_id : this.assigned_to.id,
+        const {status,msgs} = await  leadservice.updatelead(token,this.id,{
+          brand_id:(this.brand.id)?this.brand.id:this.brand,
           lastname:this.last,
           firstname:this.first,
           email:this.email,
@@ -464,7 +479,7 @@ export default {
         this.errors={};
         if(status==1){
           /*user created*/
-          this.$router.push({name:'auth.leads.listing'});
+          this.$router.push({name:'auth.sales.leads.list'});
         }else if(status==0){
           /*personal error*/
           this.errors['common']=[msgs];
@@ -475,10 +490,11 @@ export default {
           this.snackbar=true;
         }
       }
-    }
+    },
   },
   data () {
     return {
+id:'',
 additional_details:'',
 lead_time:'',
 first:'',
@@ -488,7 +504,6 @@ mobile:'',
 company:'',
 title:'',
 brand:'',
-assigned_to:'',
 lead_source:'',
 lead_status:'',
 website:'',
@@ -509,19 +524,19 @@ description:'',
 bread: [
 {
 text: 'Dashboard',
-to: {name:'Home'},
+to: {name:'auth.sales.dashboard'},
 disabled:false,
 exact:true,
 },
 {
 text: 'Leads',
-to: {name:'auth.leads.listing'},
+to: {name:'auth.sales.leads.list'},
 disabled:false,
 exact:true,
 },
 {
-text: 'Add',
-to: {name:'auth.leads.add'},
+text: 'Update',
+to: {name:'auth.sales.leads.edit'},
 disabled:false,
 exact:true,
 },
@@ -536,12 +551,12 @@ exact:true,
         },
       },
 
-      lead_source_opt: ['Advertisement','Cold Call','Employee Referal','External Referal','Online Store','Twitter','Facebook','Google+','Public Relations','Sales Email Alias','Seminar Partner','Internal Seminar','Trade Show','Web Downloads','Web Research','Chat','BrokerBin'],
+     lead_source_opt: ['Advertisement','Cold Call','Employee Referal','External Referal','Online Store','Twitter','Facebook','Google+','Public Relations','Sales Email Alias','Seminar Partner','Internal Seminar','Trade Show','Web Downloads','Web Research','Chat','BrokerBin'],
       lead_status_opt:['Attempted to Contact','Contacted','Contact in Future','Junk Lead','Lost Lead','Not Contacted','Pre-Qualified','Not Qualified'],
       Industry_opt:['ASP(Application Service Provider)','Data/Telecom OEM','ERP (Enterprise Resource Planning)','Government/Military','Large Enterprise','ManagementISV','MSP (Management Service Provider)','Network Equipment Enterprise','ReSeller','Integrator','End-User'],
       ratings_opt:['Accuqired','Active','Market Failed','Project Cancelled','Shut Down'],
       brands:[],
-      assigned_to_sales:[],
+     
     }
   },
 }
