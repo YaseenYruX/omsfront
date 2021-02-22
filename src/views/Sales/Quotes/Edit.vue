@@ -435,6 +435,7 @@ export default {
     this.getbrands();
     let id = this.$route.params.id;
     var ff = await quoteservice.getquote(id);
+    console.log(ff);
     this.company=ff.company;
     this.first=ff.firstname;
     this.last=ff.lastname;
@@ -451,9 +452,11 @@ export default {
     this.desserts=ff.items;
     this.street=ff.street;
     this.mobile=ff.mobile;
+    this.lead_time=ff.lead_time;
     // this.owner=ff.lead.sales.email;
     // this.owner_id=ff.lead.sales.id;
     this.leads=ff.lead.id;
+    this.additional_details= ff.additional_details;
     this.quote_status= ff.quote_status;
     console.log(this.desserts);
   },
@@ -502,6 +505,7 @@ price:0
         // formdata.append("owner", this.owner_id);
         formdata.append("lead_id", this.leads);
         formdata.append("mobile", this.mobile);
+        formdata.append("lead_time",this.lead_time);
         formdata.append("street", this.street);
         formdata.append("city", this.city);
         formdata.append("state", this.state);
@@ -557,6 +561,7 @@ price:0
 }
 ],
 // owner_id:'',
+lead_time:'',
 term_id:'',
 shipping:'',
 vat:'',
@@ -576,6 +581,7 @@ last:'',
 email:'',
 quote_status:1,
 website:'',
+additional_details:'',
 bread: [
 {
 text: 'Dashboard',

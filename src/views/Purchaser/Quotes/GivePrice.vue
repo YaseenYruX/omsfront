@@ -17,11 +17,12 @@ sm="12"
   class="pb-0"
 >
   <v-text-field
-    v-model="first"
+    v-model="lead_time"
     disabled
-    label="First Name"
+    label="Lead Time"
     outlined
     clearable
+    
   ></v-text-field>
 </v-col>
 
@@ -31,15 +32,15 @@ sm="12"
   class="pb-0"
 >
   <v-text-field
-    v-model="last"
+    v-model="shipping"
     disabled
-    label="Last Name"
+    label="Shipping"
     outlined
     clearable
   ></v-text-field>
 </v-col>
 
-<v-col
+<!-- <v-col
   cols="12"
   sm="6"
   class="pb-0"
@@ -51,7 +52,7 @@ sm="12"
     outlined
     clearable
   ></v-text-field>
-</v-col>
+</v-col> -->
 
  <v-col
   cols="12"
@@ -59,9 +60,9 @@ sm="12"
   class="pb-0"
 >
   <v-text-field
-    v-model="website"
+    v-model="additional_details"
     disabled
-    label="Website"
+    label="Additional Details"
     outlined
     clearable
   ></v-text-field>
@@ -102,12 +103,25 @@ dark
 center
 max-width="250"
 >
+
 <v-card-title class="headline">
   {{dessert.item}}
   <v-chip
   color="green"
   small
 >   Quantity - {{dessert.qty}}</v-chip>
+<v-chip
+  color="green"
+  small
+>   Brand - {{dessert.brands.name}}</v-chip>
+<v-chip
+  color="green"
+  small
+>   Condition - {{dessert.condition.flag_value}}</v-chip>
+<v-chip
+  color="green"
+  small
+>   Price - {{dessert.price}}</v-chip>
 </v-card-title>
 
 <v-card-subtitle>{{dessert.sku}}</v-card-subtitle>
@@ -128,7 +142,13 @@ height="200px"
   <thead>
     <tr>
       <th class="text-left">
+        Brand
+      </th>
+      <th class="text-left">
         Quantity
+      </th>
+      <th class="text-left">
+        Condition
       </th>
       <th class="text-left">
         Price
@@ -147,10 +167,34 @@ height="200px"
       :key="priceek"
     >
 <td>
+<v-select
+      v-model="pricee.brand"
+      :items="abrands"
+      item-text="name"
+      item-value="id"
+      label="Brand"
+      outlined
+      clearable
+      return-object
+    ></v-select>
+</td>
+<td>
 <v-text-field dense
 v-model="pricee.qty"
 :rules="[rules.required]"
 ></v-text-field>
+</td>
+<td>
+<v-select
+      v-model="pricee.condition"
+      :items="all_conditions"
+      item-text="flag_value"
+      item-value="id"
+      label="Condition"
+      outlined
+      clearable
+      return-object
+    ></v-select>
 </td>
 <td>
 <v-text-field dense
@@ -187,7 +231,7 @@ elevation="1"
 large
 raised
 class="float-right"
-@click="dessert.prices.push({qty:0,price:0,supplier_name:''})"
+@click="dessert.prices.push({brand:1,qty:0,condition:1,price:0,supplier_name:''})"
 >Add Row</v-btn>
 <v-col
   cols="12"
@@ -239,8 +283,14 @@ methods:{
 	savepurchaserprice(pricess,dessertk,quoteitemid){
 		if(this.$refs['form'+dessertk][0].validate()){
 			var formdata = new FormData();
+      formdata.append("shipping", this.shipping);
+      formdata.append("additional_details", this.additional_details);
+      formdata.append("quote_id", this.quote_id);
+      formdata.append("lead_time", this.lead_time);
 			for(var i=0;i<pricess.length;i++){
 				formdata.append("purchaser["+i+"][qty]", pricess[i].qty);
+        formdata.append("purchaser["+i+"][condition]", (pricess[i].condition.id)?pricess[i].condition.id:pricess[i].condition);
+        formdata.append("purchaser["+i+"][brand]", (pricess[i].brand.id)?pricess[i].brand.id:pricess[i].brand);
 				formdata.append("purchaser["+i+"][price]", pricess[i].price);
 				formdata.append("purchaser["+i+"][supplier_name]", pricess[i].supplier_name);
 			}
@@ -250,7 +300,8 @@ body: formdata,
 redirect: 'follow',
 };
 let id = quoteitemid;
-fetch(`${this.$parent.apipath}purchaser/multiquote/giveprice/${id}`, requestOptions)
+let token = localStorage.getItem('bsdapitoken');
+fetch(`${this.$parent.apipath}purchaser/multiquote/giveprice/${id}?api_token=${token}`, requestOptions)
 .then(response => response.json())
 .then(result => {
 if(result.status){
@@ -267,12 +318,16 @@ let id = this.$route.params.id;
 
 // })
 let token = localStorage.getItem('bsdapitoken');
-var ff = await purchaserservice.getquote(id,`?api_token=${token}`);
+this.abrands = await purchaserservice.getbrands(`?api_token=${token}`);
 
-this.first=ff.firstname;
-this.last=ff.lastname;
-this.email=ff.email;
-this.website=ff.website;
+var ff = await purchaserservice.getquote(id,`?api_token=${token}`);
+this.all_conditions = await purchaserservice.getconditions(`?api_token=${token}`);
+console.log(ff);
+this.lead_time=ff.lead_time;
+this.shipping=ff.shipping;
+this.quote_id=ff.id;
+// this.email=ff.email;
+this.additional_details=ff.description;
 this.tag=ff.qoute_status;
 this.desserts=ff.items;
 for(let q=0;q<ff.items.length;q++){
@@ -286,11 +341,14 @@ tab:null,
 desserts: [
 
 ],
-first:'',
-last:'',
-email:'',
+lead_time:'',
+shipping:'',
+// email:'',
 tag:'',
-website:'',
+additional_details:'',
+quote_id:'',
+abrands:[],
+all_conditions:[],
 bread: [
 {
 text: 'Dashboard',

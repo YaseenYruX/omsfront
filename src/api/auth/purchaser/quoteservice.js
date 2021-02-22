@@ -20,5 +20,25 @@ class quoteservice{
 			return error;
 		});
 	}
+	getbrands(params)
+	{
+		return axios.get(`${connection.apiurl}auth/purchaser/quotes/brands${params}`)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			return error;
+		});	
+	}
+	getconditions(params)
+	{
+		return axios.get(`${connection.apiurl}auth/purchaser/quotes/conditions${params}`)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			return error;
+		});	
+	}
 }
 export default new quoteservice();

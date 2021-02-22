@@ -517,6 +517,7 @@ price:0
         formdata.append("quote_status",this.quote_status.id);
         formdata.append("lead_time",this.lead_time);
         formdata.append("description", this.description);
+        formdata.append("additional_details", this.additional_details);
         for(var i=0;i<this.desserts.length;i++){
 	formdata.append("items["+i+"][id]", this.desserts[i].id);
   formdata.append("items["+i+"][brand]", this.desserts[i].brand.id);
