@@ -18,7 +18,6 @@ sm="12"
 >
   <v-text-field
     v-model="lead_time"
-    disabled
     label="Lead Time"
     outlined
     clearable
@@ -33,7 +32,6 @@ sm="12"
 >
   <v-text-field
     v-model="shipping"
-    disabled
     label="Shipping"
     outlined
     clearable
@@ -61,7 +59,6 @@ sm="12"
 >
   <v-text-field
     v-model="additional_details"
-    disabled
     label="Additional Details"
     outlined
     clearable

@@ -362,6 +362,7 @@ v-model="item.qty"
 <td>
 <v-text-field
 v-model="item.price"
+v-on:change="gettotal()"
 ></v-text-field>
 </td>
       <td>{{ parseFloat(item.qty*item.price).toFixed(2) }}</td>
@@ -396,6 +397,7 @@ mdi-delete-outline
     class="float-right"
     @click="addrow"
   >Add Row</v-btn>
+   <p class="float-left">Total: ${{this.all_total}}.00</p>
 </v-col>
 <v-col
   cols="12"
@@ -438,6 +440,16 @@ export default {
     }
   },
   methods:{
+    gettotal: async function()
+    {
+      let alltotal = 0;
+      for(var i=0;i<this.desserts.length;i++)
+      {  
+        alltotal += this.desserts[i].qty*this.desserts[i].price;
+      }
+     this.all_total = alltotal;
+     console.log(this.all_total);
+    },
     getbrands: async function ()
     {
       this.all_brands= await quoteservice.getbrands();
@@ -561,6 +573,7 @@ price:0
 ],
 showid:0,
 // owner_id:'',
+all_total:0,
 term_id:'',
 shipping:'',
 vat:'',
