@@ -106,13 +106,13 @@ value: 'id',
 text: 'Full Name',
 align: 'center',
 sortable: true,
-value: 'fullname',
+value: 'quote.fullname',
 },
 {
 text: 'Email',
 align: 'center',
 sortable: true,
-value: 'email',
+value: 'quote.email',
 },
 {
 text: 'Action',
@@ -145,6 +145,7 @@ this.desserts = data.data
 this.totalpages = data.last_page
 this.totalDesserts = data.total
 this.loading = false
+console.log(data.data);
 })
 },
 fakeApiCall(){

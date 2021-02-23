@@ -326,7 +326,7 @@ this.quote_id=ff.id;
 // this.email=ff.email;
 this.additional_details=ff.description;
 this.tag=ff.qoute_status;
-this.desserts=ff.items;
+this.desserts=ff.quote.items;
 for(let q=0;q<ff.items.length;q++){
 	this.qtytotals[ff.items[q].id]=ff.items[q].qty;
 }
