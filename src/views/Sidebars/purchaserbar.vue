@@ -112,7 +112,7 @@
           </v-list>
         </v-menu>
       </v-list-item>
-      <v-list-item class="pa-0" link :to="{name:'auth.sales.quotes.list'}">
+      <!-- <v-list-item class="pa-0" link :to="{name:'auth.sales.quotes.list'}">
         <v-menu 
         open-on-hover
         offset-x
@@ -139,7 +139,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
-      </v-list-item>
+      </v-list-item> -->
       </v-list>
     </v-navigation-drawer>
   </div>
