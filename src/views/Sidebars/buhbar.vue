@@ -47,8 +47,8 @@
         </template>
 
         <v-list>
-          <v-list-item link :to="{name:'auth.purchaser.quotes.unanswered'}">
-            <v-list-item-title><v-icon>mdi-plus</v-icon>UnAsnwered Quotes</v-list-item-title>
+          <v-list-item :key="brnd.brand_id" v-for="brnd in alluserbrandssidebar" exact link :to="{name:'auth.buh.quotes.listing',params:{brandid:brnd.brand_id}}">
+            <v-list-item-title><v-icon>mdi-plus</v-icon>{{brnd.brand.name}} Quotes</v-list-item-title>
           </v-list-item>
        <!--    <v-list-item link :to="{name:'auth.sales.quotes.list'}">
             <v-list-item-title><v-icon>mdi-plus</v-icon>Answered Quotes</v-list-item-title>
@@ -84,7 +84,7 @@
       <v-list
         dense
       >
-      <v-list-item class="pa-0" link :to="{name:'auth.buh.quotes.listing'}">
+      <v-list-item class="pa-0" link :to="{name:'auth.buh.quotes.listing',params:{brandid:0}}">
         <v-menu 
         open-on-hover
         offset-x
@@ -106,40 +106,12 @@
             </v-list-item-content>
           </template>
           <v-list>
-            <v-list-item exact link :to="{name:'auth.buh.quotes.listing'}">
-              <v-list-item-title>Quotes Listing</v-list-item-title>
+            <v-list-item :key="brnd.brand_id" v-for="brnd in alluserbrandssidebar" exact link :to="{name:'auth.buh.quotes.listing',params:{brandid:brnd.brand_id}}">
+              <v-list-item-title>{{brnd.brand.name}} Quotes</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
       </v-list-item>
-      <!-- <v-list-item class="pa-0" link :to="{name:'auth.sales.quotes.list'}">
-        <v-menu 
-        open-on-hover
-        offset-x
-        style="max-width: 600px"
-        :close-on-content-click="false"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-list-item-icon color="primary"
-                  dark
-                  class=" d-block"
-                  style="width: 100%;text-align: center;"
-                  v-bind="attrs"
-                  v-on="on">
-              <v-icon v-text="'mdi-format-quote-close-outline'"></v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>Quote</v-list-item-title>
-            </v-list-item-content>
-          </template>
-          <v-list>
-            <v-list-item exact link :to="{name:'auth.sales.quotes.add',params:{id:0}}">
-              <v-list-item-title>Add Quote</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-list-item> -->
       </v-list>
     </v-navigation-drawer>
   </div>
@@ -164,6 +136,11 @@ export default {
   },
   mounted(){
  
+  },
+  computed:{
+    alluserbrandssidebar(){
+      return this.$store.getters.userbrands;
+    },
   }
 };
 </script>
