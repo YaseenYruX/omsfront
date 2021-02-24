@@ -20,30 +20,33 @@ disable-pagination
 :loading="loading"
 class="elevation-1"
 >
-<template v-slot:item.quote_status="{ item }">
+<!-- <template v-slot:item.lead_tag="{ item }">
 <v-chip
   color="green"
   outlined
-  v-if="item.quote_status==1"
->Open</v-chip>
+  v-if="item.lead_tag=='BigFish'"
+  v-text="item.lead_tag"
+></v-chip>
 <v-chip
-  color="red"
+  color="blue"
   outlined
-  v-if="item.quote_status==2"
->Close</v-chip>
+  v-if="item.lead_tag=='SmallFish'"
+  v-text="item.lead_tag"
+></v-chip>
 <v-chip
-  color="orange"
+  color="purple"
   outlined
-  v-if="item.quote_status==3"
->Pending</v-chip>
-</template>
+  v-if="item.lead_tag=='NoGo'"
+  v-text="item.lead_tag"
+></v-chip>
+</template> -->
 <template v-slot:item.actions="{ item }">
 <v-btn
   dark
   x-small
   icon
   color="primary"
-  :to="{ name:'auth.sales.quotes.edit' ,params:{id:item.id}}"
+  :to="{ name:'auth.leads.update' ,params:{id:item.id}}"
 >
   <v-icon dark>
     mdi-pencil-plus
@@ -58,6 +61,18 @@ class="elevation-1"
 >
   <v-icon dark>
     mdi-delete-outline
+  </v-icon>
+</v-btn>
+<v-btn
+  dark
+  x-small
+  icon
+  color="success"
+  link
+  :to="{name:'auth.quote.add',params:{id:item.id}}"
+>
+  <v-icon dark>
+    mdi-account-convert
   </v-icon>
 </v-btn>
 </template>
@@ -91,20 +106,20 @@ bottom
 right
 fixed
 link
-:to="{name:'auth.sales.quotes.add',params:{id:0}}"
+:to="{name:'auth.leads.add'}"
 >
 <v-icon>mdi-plus</v-icon>
 </v-btn>
 </v-col>
 </v-row>
 </template>
+
 <script>
 // @ is an alias to /src
 //import HelloWorld from '@/components/HelloWorld.vue'
-import salesservice from '@/api/auth/sales/quoteservice';
 import Swal from 'sweetalert2'
 export default {
-name: 'auth.sales.quotes.list',
+name: 'auth.buh.quotes.listing',
 components: {
 //HelloWorld
 },
@@ -118,8 +133,8 @@ disabled:false,
 exact:true,
 },
 {
-text: 'Quotes',
-to: {name:'auth.sales.quote.listing'},
+text: 'Leads',
+to: {name:'auth.leads.listing'},
 disabled:false,
 exact:true,
 },
@@ -154,16 +169,10 @@ sortable: true,
 value: 'email',
 },
 {
-text: 'Brand',
+text: 'Source',
 align: 'center',
 sortable: true,
-value: 'quote_brand.name',
-},
-{
-text: 'Status',
-align: 'center',
-sortable: true,
-value: 'quote_status',
+value: 'lead_source',
 },
 {
 text: 'Action',
@@ -204,7 +213,7 @@ deletebrand: async function (id){
     }
   });
   if(isConfirmed){
-    await fetch(`${this.$parent.apipath}auth/sales/quotes/delete/${id}?api_token=${localStorage.getItem('bsdapitoken')}`).then(function(e){
+    await fetch(`${this.$parent.apipath}leads/delete/${id}`).then(function(e){
       return e.json();
     });
     Swal.fire(
@@ -215,6 +224,10 @@ deletebrand: async function (id){
     this.getDataFromApi();
   }
 },
+convert: async function(id)
+{
+  console.log(id);
+},
 getDataFromApi () {
 this.loading = true
 this.fakeApiCall().then(data => {
@@ -222,6 +235,7 @@ this.desserts = data.data
 this.totalpages = data.last_page
 this.totalDesserts = data.total
 this.loading = false
+
 })
 },
 fakeApiCall(){
@@ -229,11 +243,9 @@ fakeApiCall(){
   if(this.options.sortDesc.length==1){
     _sortstr=`&sortcol=${this.options.sortBy[0]}&sorttype=${this.options.sortDesc[0]===true?'desc':'asc'}`
   }
-  // return fetch(`${this.$parent.apipath}quotes?page=${this.page}&perpage=${this.perpage}${_sortstr}`).then(function(e){
-  //   return e.json();
-  // })
-  var token = localStorage.getItem('bsdapitoken');
-  return salesservice.getquotes(`?api_token=${token}&page=${this.page}&perpage=${this.perpage}${_sortstr}`);
+  return fetch(`${this.$parent.apipath}leads?page=${this.page}&perpage=${this.perpage}${_sortstr}`).then(function(e){
+    return e.json();
+  })
 },
 handlePageChange(value){
   this.page = value;

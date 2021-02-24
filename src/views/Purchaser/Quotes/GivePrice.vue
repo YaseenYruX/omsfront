@@ -64,7 +64,19 @@ sm="12"
     clearable
   ></v-text-field>
 </v-col>
-
+<v-col
+  cols="12"
+  sm="6"
+  class="pb-0"
+>
+<v-btn
+    color="green"
+    elevation="1"
+    large
+    raised
+    @click="saveprice()"
+  >Save Prices</v-btn>
+</v-col>
 <v-col
   cols="12"
   sm="12"
@@ -110,7 +122,7 @@ max-width="250"
 <v-chip
   color="green"
   small
->   Brand - {{dessert.brands.name}}</v-chip>
+>   Brand - {{dessert.brands.flag_value}}</v-chip>
 <v-chip
   color="green"
   small
@@ -142,10 +154,16 @@ height="200px"
         Brand
       </th>
       <th class="text-left">
-        Quantity
+        Item
+      </th>
+      <th class="text-left">
+        Description
       </th>
       <th class="text-left">
         Condition
+      </th>
+      <th class="text-left">
+        Quantity
       </th>
       <th class="text-left">
         Price
@@ -165,11 +183,35 @@ height="200px"
     >
 <td>
 <v-select
-      v-model="pricee.brand"
+      v-model="pricee.brand_id"
       :items="abrands"
-      item-text="name"
+      item-text="flag_value"
       item-value="id"
       label="Brand"
+      outlined
+      clearable
+      return-object
+    ></v-select>
+</td>
+<td>
+<v-text-field dense
+v-model="pricee.item"
+:rules="[rules.required]"
+></v-text-field>
+</td>
+<td>
+<v-text-field dense
+v-model="pricee.description"
+:rules="[rules.required]"
+></v-text-field>
+</td>
+<td>
+<v-select
+      v-model="pricee.condition_id"
+      :items="all_conditions"
+      item-text="flag_value"
+      item-value="id"
+      label="Condition"
       outlined
       clearable
       return-object
@@ -180,18 +222,6 @@ height="200px"
 v-model="pricee.qty"
 :rules="[rules.required]"
 ></v-text-field>
-</td>
-<td>
-<v-select
-      v-model="pricee.condition"
-      :items="all_conditions"
-      item-text="flag_value"
-      item-value="id"
-      label="Condition"
-      outlined
-      clearable
-      return-object
-    ></v-select>
 </td>
 <td>
 <v-text-field dense
@@ -228,7 +258,7 @@ elevation="1"
 large
 raised
 class="float-right"
-@click="dessert.prices.push({brand:1,qty:0,condition:1,price:0,supplier_name:''})"
+@click="dessert.prices.push({brand_id:0,item:'',description:'',condition_id:1,qty:0,price:0,supplier_name:''})"
 >Add Row</v-btn>
 <v-col
   cols="12"
@@ -277,6 +307,20 @@ components: {
 //HelloWorld
 },
 methods:{
+  saveprice: async function()
+  { 
+    let x = this.$route.params.id;
+    let token = localStorage.getItem('bsdapitoken');
+    let response = await purchaserservice.answered(x,token,{
+      lead_time:this.lead_time,
+      shipping:this.shipping,
+      additional_details:this.additional_details,
+    });
+    if(response.status==1)
+    {
+      this.$router.push({name:'auth.purchaser.quotes.unanswered'});
+    }
+  },
 	savepurchaserprice(pricess,dessertk,quoteitemid){
 		if(this.$refs['form'+dessertk][0].validate()){
 			var formdata = new FormData();
@@ -286,8 +330,10 @@ methods:{
       formdata.append("lead_time", this.lead_time);
 			for(var i=0;i<pricess.length;i++){
 				formdata.append("purchaser["+i+"][qty]", pricess[i].qty);
-        formdata.append("purchaser["+i+"][condition]", (pricess[i].condition.id)?pricess[i].condition.id:pricess[i].condition);
-        formdata.append("purchaser["+i+"][brand]", (pricess[i].brand.id)?pricess[i].brand.id:pricess[i].brand);
+        formdata.append("purchaser["+i+"][item]", pricess[i].item);
+        formdata.append("purchaser["+i+"][description]", pricess[i].description);
+        formdata.append("purchaser["+i+"][condition_id]", (pricess[i].condition_id.id)?pricess[i].condition_id.id:pricess[i].condition_id);
+        formdata.append("purchaser["+i+"][brand_id]", (pricess[i].brand_id.id)?pricess[i].brand_id.id:pricess[i].brand_id);
 				formdata.append("purchaser["+i+"][price]", pricess[i].price);
 				formdata.append("purchaser["+i+"][supplier_name]", pricess[i].supplier_name);
 			}
@@ -297,8 +343,9 @@ body: formdata,
 redirect: 'follow',
 };
 let id = quoteitemid;
+let qid = this.$route.params.id;
 let token = localStorage.getItem('bsdapitoken');
-fetch(`${this.$parent.apipath}purchaser/multiquote/giveprice/${id}?api_token=${token}`, requestOptions)
+fetch(`${this.$parent.apipath}auth/purchaser/quotes/multi/giveprice/${qid}/${id}?api_token=${token}`, requestOptions)
 .then(response => response.json())
 .then(result => {
 if(result.status){
@@ -315,20 +362,22 @@ let id = this.$route.params.id;
 
 // })
 let token = localStorage.getItem('bsdapitoken');
-this.abrands = await purchaserservice.getbrands(`?api_token=${token}`);
+this.abrands = await purchaserservice.getitembrand(`?api_token=${token}`);
 
 var ff = await purchaserservice.getquote(id,`?api_token=${token}`);
 this.all_conditions = await purchaserservice.getconditions(`?api_token=${token}`);
-console.log(ff);
+
 this.lead_time=ff.lead_time;
 this.shipping=ff.shipping;
 this.quote_id=ff.id;
 // this.email=ff.email;
 this.additional_details=ff.description;
 this.tag=ff.qoute_status;
+
 this.desserts=ff.quote.items;
-for(let q=0;q<ff.items.length;q++){
-	this.qtytotals[ff.items[q].id]=ff.items[q].qty;
+console.log(this.desserts);
+for(let q=0;q<ff.quote.items.length;q++){
+	this.qtytotals[ff.quote.items[q].id]=ff.quote.items[q].qty;
 }
 },
 data () {

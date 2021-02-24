@@ -1,0 +1,46 @@
+/*login page*/
+.theme--light.v-application.login-screen-main {
+    background: url(https://bsdtechs.com/assets/images/banner.png);
+    background-size: cover;
+}
+
+.login-screen-main .v-main__wrap{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-screen-main.v-application .grey.lighten-5 {
+    background-color: transparent!important;
+    border-color: transparent!important;
+}
+
+.login-screen-main .v-text-field--outlined fieldset{
+	border: 1px solid #fff;
+}
+
+.login-screen-main .theme--light.v-input,.login-screen-main .theme--light.v-input input,.login-screen-main .theme--light.v-input textarea{
+	color: #fff !important;
+}
+
+.login-screen-main .theme--light.v-label{
+	color: #fff !important;
+}
+
+.login-screen-main .theme--light.v-icon{
+	color: #fff ;
+}
+
+.login-screen-main.v-application .secondary {
+    background-color: #ef6a27 !important;
+    border-color: #ef6a27 !important;
+}
+
+.login-screen-main .theme--light.v-btn.v-btn--disabled, 
+.login-screen-main .theme--light.v-btn.v-btn--disabled .v-btn__loading, 
+.login-screen-main .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #fff !important;
+}
+
+
+/*login page end*/

@@ -115,6 +115,12 @@ sortable: true,
 value: 'quote.email',
 },
 {
+text: 'Brand',
+align: 'center',
+sortable: true,
+value: 'quote.quote_brand.name',
+},
+{
 text: 'Action',
 align: 'center',
 sortable: false,

@@ -1,6 +1,7 @@
 <template>
-  <v-app>
+  <v-app :class="appClass">
     <adminbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==1" :loggedindetail="loggedindetail" />
+    <buhbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==2" :loggedindetail="loggedindetail" />
     <salesbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==4" :loggedindetail="loggedindetail" />
     <purchaserbar @logoutauthparent="logoutauth" v-if="loggedin&&loggedindetail.user_type==3" :loggedindetail="loggedindetail" />
     <v-main>
@@ -12,16 +13,17 @@
 import adminbar from '@/views/Sidebars/adminbar.vue'
 import salesbar from '@/views/Sidebars/salesbar.vue'
 import purchaserbar from '@/views/Sidebars/purchaserbar.vue'
+import buhbar from '@/views/Sidebars/buhbar.vue'
 import authservice from '@/api/auth/login';
 export default {
   name: 'App',
 
   components: {
     adminbar,
+    buhbar,
     purchaserbar,
     salesbar
   },
-
   data: () => ({
     loggedin:false,
     loggedindetail:{},
@@ -65,6 +67,11 @@ export default {
   watch:{
     apitoken:function(val){
       localStorage.setItem('bsdapitoken',val);
+    }
+  },
+  computed:{
+    appClass(){
+      return this.$store.getters.appcls;
     }
   }
 };

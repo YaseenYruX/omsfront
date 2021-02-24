@@ -176,6 +176,12 @@ sortable: true,
 value: 'lead_source',
 },
 {
+text: 'Brand',
+align: 'center',
+sortable: true,
+value: 'lead_brand.name',
+},
+{
 text: 'Action',
 align: 'center',
 sortable: false,

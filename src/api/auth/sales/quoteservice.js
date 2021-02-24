@@ -29,7 +29,16 @@ class quoteservice{
 		});
 	}
 	getbrands(){
-		return axios.get(`${connection.apiurl}brands?api_token=${localStorage.getItem('bsdapitoken')}`)
+		return axios.get(`${connection.apiurl}auth/sales/quotes/brands?api_token=${localStorage.getItem('bsdapitoken')}`)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			return error;
+		});
+	}
+	getitembrand(){
+		return axios.get(`${connection.apiurl}auth/sales/quotes/itembrand?api_token=${localStorage.getItem('bsdapitoken')}`)
 		.then(function (response) {
 			return response.data;
 		})

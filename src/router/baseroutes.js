@@ -8,7 +8,8 @@ export default [
   {
     path: '/auth/login',
     name: 'auth.login',
-    component: () => import('../views/Auth/Login.vue')
+    component: () => import('../views/Auth/Login.vue'),
+    props:{ routerClass : 'loginpage' }
   },
   {
     path: '/leads',

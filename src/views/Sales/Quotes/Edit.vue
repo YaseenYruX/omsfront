@@ -36,6 +36,24 @@ lazy-validation
     ></v-select>
   </v-col>
   <v-col
+    class="d-flex pb-0"
+    cols="12"
+    sm="6"
+  >
+    <v-select
+      v-model="brand"
+      :items="all_brands"
+      :rules="[rules.required]"
+      item-text="name"
+      item-value="id"
+      label="Brand"
+      outlined
+      clearable
+      :disabled="parseInt($route.params.id)>0"
+      return-object
+    ></v-select>
+  </v-col>
+  <v-col
   cols="12"
   sm="6"
   class="pb-0"
@@ -319,8 +337,8 @@ height="300px"
     <td>
 <v-select
       v-model="item.brand"
-      :items="all_brands"
-      item-text="name"
+      :items="item_brand"
+      item-text="flag_value"
       item-value="id"
       label="Brand"
       outlined
@@ -435,9 +453,9 @@ export default {
     this.getconditions();
     this.getleads();
     this.getbrands();
+    this.itembrand();
     let id = this.$route.params.id;
     var ff = await quoteservice.getquote(id);
-    console.log(ff);
     this.company=ff.company;
     this.first=ff.firstname;
     this.last=ff.lastname;
@@ -455,6 +473,7 @@ export default {
     this.street=ff.street;
     this.mobile=ff.mobile;
     this.lead_time=ff.lead_time;
+    this.brand=ff.brand_id;
     // this.owner=ff.lead.sales.email;
     // this.owner_id=ff.lead.sales.id;
     this.leads=ff.lead.id;
@@ -473,10 +492,14 @@ export default {
      this.all_total = alltotal;
      console.log(this.all_total);
     },
+    itembrand: async function ()
+    {
+      this.item_brand= await quoteservice.getitembrand();
+    },
     getbrands: async function ()
     {
       this.all_brands= await quoteservice.getbrands();
-      this.all_brands = this.all_brands.data;
+      // this.all_brands = this.all_brands.data;
     },
     getconditions: async function()
     {
@@ -528,6 +551,8 @@ price:0
         formdata.append("vat", this.vat);
         formdata.append("description", this.description);
         formdata.append("quote_status", this.quote_status);
+        formdata.append("brand_id", this.brand);
+        formdata.append("additional_details", this.additional_details);
    
         for(var i=0;i<this.desserts.length;i++){
 	// formdata.append("items["+i+"][id]", this.desserts[i].id);
@@ -576,6 +601,7 @@ price:0
 all_total:0,
 lead_time:'',
 term_id:'',
+brand:'',
 shipping:'',
 vat:'',
 description:'',
@@ -629,6 +655,7 @@ exact:true,
       all_leads:[],
       all_conditions:[],
       all_brands:[],
+      item_brand:[],
     }
   },
 }

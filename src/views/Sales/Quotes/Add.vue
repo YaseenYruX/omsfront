@@ -37,6 +37,24 @@ lazy-validation
     ></v-select>
   </v-col>
   <v-col
+    class="d-flex pb-0"
+    cols="12"
+    sm="6"
+  >
+    <v-select
+      v-model="brand"
+      :items="all_brands"
+      :rules="[rules.required]"
+      item-text="name"
+      item-value="id"
+      label="Brand"
+      outlined
+      clearable
+      :disabled="parseInt($route.params.id)>0"
+      return-object
+    ></v-select>
+  </v-col>
+  <v-col
   cols="12"
   sm="6"
   class="pb-0"
@@ -317,8 +335,8 @@ height="300px"
 <td>
 <v-select
       v-model="item.brand"
-      :items="all_brands"
-      item-text="name"
+      :items="item_brand"
+      item-text="flag_value"
       item-value="id"
       label="Brand"
       outlined
@@ -434,6 +452,8 @@ export default {
     this.getleads();
     this.getbrands();
     this.getconditions();
+    this.itembrand();
+ 
     if(this.$route.params.id && this.$route.params.id>0)
     {
       this.get_data(this.$route.params.id);
@@ -450,10 +470,14 @@ export default {
      this.all_total = alltotal;
      console.log(this.all_total);
     },
+    itembrand: async function ()
+    {
+      this.item_brand= await quoteservice.getitembrand();
+    },
     getbrands: async function ()
     {
       this.all_brands= await quoteservice.getbrands();
-      this.all_brands = this.all_brands.data;
+      
     },
     getconditions: async function()
     {
@@ -486,6 +510,7 @@ export default {
       this.quote_status=data.quote_status;
       this.additional_details=data.additional_details;
       this.lead_time=data.lead_time;
+      this.brand= data.brand_id;
       
      
     }, 
@@ -516,6 +541,7 @@ price:0
         formdata.append("email", this.email);
         formdata.append("company", this.company);
         // formdata.append("owner", this.owner_id);
+        formdata.append("brand_id", this.brand);
         formdata.append("lead_id", this.leads);
         formdata.append("mobile", this.mobile);
         formdata.append("street", this.street);
@@ -629,6 +655,7 @@ exact:true,
       all_leads:[],
       all_conditions:[],
       all_brands:[],
+      item_brand:[],
     }
   },
 }

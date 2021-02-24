@@ -1,16 +1,21 @@
 <template>
 	<v-container>
-    
     <v-row no-gutters class="align-center justify-center">
       <v-col
-        cols="8"
-        sm="8"
+        cols="7"
+        sm="7"
       >
         <v-card
           class="pa-10  grey lighten-5"
           outlined
           tile
         >
+          <v-img class="ma-0 ma-auto mb-10"
+            max-height="129"
+            max-width="125"
+            position="center center"
+            src="https://bsdtechs.com/assets/images/logo.png"
+          ></v-img>
           <div class="login-form-sec">
             <v-form
               ref="form"
@@ -70,6 +75,11 @@ export default {
   components: {
     
   },
+  mounted(){
+    this.$nextTick(function(){
+      this.$store.commit('setAppCls','login-screen-main');
+    });
+  },
   data () {
     return {
       loader: null,
@@ -113,6 +123,10 @@ export default {
             else if(logindetail.user.user_type==3)
             {
               this.$router.push({name:'auth.purchaser.dashboard'});
+            }
+            else if(logindetail.user.user_type==2)
+            {
+              this.$router.push({name:'auth.buh.dashboard'});
             }
             else if(logindetail.user.user_type==4)
             {
