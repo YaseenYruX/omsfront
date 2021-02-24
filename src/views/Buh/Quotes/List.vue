@@ -20,59 +20,33 @@ disable-pagination
 :loading="loading"
 class="elevation-1"
 >
-<!-- <template v-slot:item.lead_tag="{ item }">
+<template v-slot:item.quote_status="{ item }">
 <v-chip
   color="green"
   outlined
-  v-if="item.lead_tag=='BigFish'"
-  v-text="item.lead_tag"
-></v-chip>
+  v-if="item.quote_status==1"
+>Open</v-chip>
 <v-chip
-  color="blue"
+  color="red"
   outlined
-  v-if="item.lead_tag=='SmallFish'"
-  v-text="item.lead_tag"
-></v-chip>
+  v-if="item.quote_status==2"
+>Close</v-chip>
 <v-chip
-  color="purple"
+  color="orange"
   outlined
-  v-if="item.lead_tag=='NoGo'"
-  v-text="item.lead_tag"
-></v-chip>
-</template> -->
+  v-if="item.quote_status==3"
+>Pending</v-chip>
+</template>
 <template v-slot:item.actions="{ item }">
 <v-btn
   dark
   x-small
   icon
   color="primary"
-  :to="{ name:'auth.leads.update' ,params:{id:item.id}}"
+  :to="{ name:'auth.quote.update' ,params:{id:item.id}}"
 >
   <v-icon dark>
     mdi-pencil-plus
-  </v-icon>
-</v-btn>
-<v-btn
-  dark
-  x-small
-  icon
-  color="error"
-  @click="deletebrand(item.id)"
->
-  <v-icon dark>
-    mdi-delete-outline
-  </v-icon>
-</v-btn>
-<v-btn
-  dark
-  x-small
-  icon
-  color="success"
-  link
-  :to="{name:'auth.quote.add',params:{id:item.id}}"
->
-  <v-icon dark>
-    mdi-account-convert
   </v-icon>
 </v-btn>
 </template>
@@ -106,18 +80,17 @@ bottom
 right
 fixed
 link
-:to="{name:'auth.leads.add'}"
+:to="{name:'auth.quote.add',params:{id:0}}"
 >
 <v-icon>mdi-plus</v-icon>
 </v-btn>
 </v-col>
 </v-row>
 </template>
-
 <script>
 // @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
-import Swal from 'sweetalert2'
+//import buhservice from '@/api/auth/buh/quoteservice.js'
+//import Swal from 'sweetalert2'
 export default {
 name: 'auth.buh.quotes.listing',
 components: {
@@ -128,13 +101,13 @@ return {
 bread: [
 {
 text: 'Dashboard',
-to: {name:'Home'},
+to: {name:'auth.buh.dashboard'},
 disabled:false,
 exact:true,
 },
 {
-text: 'Leads',
-to: {name:'auth.leads.listing'},
+text: 'Quotes',
+to: {name:'auth.buh.quotes.listing',params:{brandid:this.$route.params.brandid}},
 disabled:false,
 exact:true,
 },
@@ -169,10 +142,10 @@ sortable: true,
 value: 'email',
 },
 {
-text: 'Source',
+text: 'Status',
 align: 'center',
 sortable: true,
-value: 'lead_source',
+value: 'quote_status',
 },
 {
 text: 'Action',
@@ -192,42 +165,15 @@ options:{
     this.getDataFromApi();
   },
   deep:true,
+},
+$route(){
+  this.getDataFromApi();
 }
 },
 mounted () {
 this.getDataFromApi();
 },
 methods: {
-deletebrand: async function (id){
-  const isConfirmed = await Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      return true;
-    }
-  });
-  if(isConfirmed){
-    await fetch(`${this.$parent.apipath}leads/delete/${id}`).then(function(e){
-      return e.json();
-    });
-    Swal.fire(
-      'Deleted!',
-      'Your record has been deleted.',
-      'success'
-    )
-    this.getDataFromApi();
-  }
-},
-convert: async function(id)
-{
-  console.log(id);
-},
 getDataFromApi () {
 this.loading = true
 this.fakeApiCall().then(data => {
@@ -235,17 +181,18 @@ this.desserts = data.data
 this.totalpages = data.last_page
 this.totalDesserts = data.total
 this.loading = false
-
 })
 },
-fakeApiCall(){
+fakeApiCall: function(){
   var _sortstr = ``;
   if(this.options.sortDesc.length==1){
     _sortstr=`&sortcol=${this.options.sortBy[0]}&sorttype=${this.options.sortDesc[0]===true?'desc':'asc'}`
   }
-  return fetch(`${this.$parent.apipath}leads?page=${this.page}&perpage=${this.perpage}${_sortstr}`).then(function(e){
-    return e.json();
-  })
+  let id = this.$route.params.brandid;
+  return fetch(`${this.$parent.apipath}auth/buh/quote_brand/${id}?api_token=${localStorage.getItem('bsdapitoken')}&page=${this.page}&perpage=${this.perpage}${_sortstr}`).then(function(e){
+      return e.json();
+    })
+  //return buhservice.getquote(this.$route.params.brandid,`?api_token?${localStorage.getItem('bsdapitoken')}&page=${this.page}&perpage=${this.perpage}${_sortstr}`);
 },
 handlePageChange(value){
   this.page = value;
