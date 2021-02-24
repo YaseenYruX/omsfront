@@ -35,13 +35,16 @@ export default {
     this.$nextTick(async function(){
       if(!localStorage.getItem('bsdapitoken')){
         if(!this.loggedin){
-          this.$router.push({name:'auth.login'})
+          this.$router.push({name:'auth.login'});
+
         }
       }else{
         this.apitoken=localStorage.getItem('bsdapitoken');
         this.loggedin=true;
         /*fetch user detail against api token here*/
         this.loggedindetail = await authservice.getuser(this.apitoken);
+        var _brands = await authservice.getuserbrands(this.apitoken);
+        this.$store.commit('setUserBrands',_brands);
         //this.loggedindetail={};
         /*fetch user detail against api token here end*/
       }

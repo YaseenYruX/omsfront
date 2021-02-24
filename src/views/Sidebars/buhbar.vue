@@ -13,7 +13,7 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        :to="{name:'auth.purchaser.dashboard'}"
+        :to="{name:'auth.buh.dashboard'}"
         text
         exact
       >

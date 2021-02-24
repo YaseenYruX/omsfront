@@ -22,6 +22,15 @@ class loginservice{
 			return error;
 		});
 	}
+	getuserbrands(token){
+		return axios.get(`${connection.apiurl}auth/my-brands?api_token=${token}`)
+		.then(function (response) {
+			return response.data;
+		})
+		.catch(function (error) {
+			return error;
+		});
+	}
 }
 
 export default new loginservice();

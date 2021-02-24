@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <h1>Hello WOrld</h1>
+    {{alluserbrands}}
   </v-row> 
 </template>
 <script>
@@ -22,6 +22,11 @@ return {
 },
 methods:{
   
+},
+computed:{
+	alluserbrands(){
+		return this.$store.getters.userbrands;
+	},
 }
 }
 </script>

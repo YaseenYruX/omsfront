@@ -12,9 +12,8 @@ new Vue({
   render: h => h(App),
   store,
 watch:{
-'$route' (to, from){
+'$route' (){
 this.$store.commit('setAppCls','');
-console.log(to, from)
 }
 }
 }).$mount('#app')
