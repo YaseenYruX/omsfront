@@ -14,6 +14,11 @@ export default [
 				name: 'auth.buh.quotes.listing',
 				component: () => import('../views/Buh/Quotes/List.vue'),
 			},
+			{
+				path: 'quote-detail/:quoteid',
+				name: 'auth.buh.quotes.detail',
+				component: () => import('../views/Buh/Quotes/Detail.vue'),
+			},
 			// {
 			// 	path: 'giveprice/:id',
 			// 	name: 'auth.purchaser.quotes.giveprice',
