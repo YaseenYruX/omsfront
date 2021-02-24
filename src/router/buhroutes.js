@@ -10,7 +10,7 @@ export default [
 				component: () => import('../views/Buh/Dashboard.vue')
 			},
 			{
-				path: 'quotes',
+				path: 'quotes/:brandid',
 				name: 'auth.buh.quotes.listing',
 				component: () => import('../views/Buh/Quotes/List.vue'),
 			},
