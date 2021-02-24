@@ -1,6 +1,10 @@
 <template>
   <v-row>
-    {{alluserbrands}}
+    <ul>
+    	<li v-for="brnd in alluserbrands">
+    		{{brnd.id}}
+    	</li>
+    </ul>
   </v-row> 
 </template>
 <script>
